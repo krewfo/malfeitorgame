@@ -1,0 +1,11 @@
+{
+  "npc_id": "gareth", "display_name": "Gareth", "age": 45,
+  "trust": { "familiaridade":0, "lealdade":0, "respeito":0, "simpatia":0, "medo":2, "curiosidade":3 },
+  "arc_state": "neutral", "last_interaction_day":0, "lies_detected":0, "culpa_used":false,
+  "thresholds": { "dialogo_desbloqueado":5, "ruptura_irreversivel":-5, "medo_bloqueia_simpatia":10 },
+  "schedule": [
+    { "start":6, "end":11, "location":"tavern_kitchen" },
+    { "start":11, "end":23, "location":"tavern_main" }
+  ],
+  "sprite":"gareth", "portrait_states":["neutral","pleased","suspicious","angry"]
+}

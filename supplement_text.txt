@@ -1,0 +1,1193 @@
+﻿=== PAGE 1 ===
+Ôÿá  ÔÜö  Ôÿá 
+MALFEITOR: O Vil├úo que Sobreviveu 
+SUPPLEMENT BIBLE v2.0 ÔÇö Stack Web + Demo 
+Complemento ao MasterBible v4.0  |  HTML + CSS + JavaScript  |  2025-2026 
+ 
+Ôùå Este documento resolve lacunas espec├¡ficas para a demo web (Ato I, Dias 1-7): c├│digo 
+completo dos sistemas cr├¡ticos, f├¡sica dos personagens em Canvas, JSONs de di├ílogo 
+prontos para uso, testes, e guia de implementa├º├úo por ordem de sess├úo. 
+ 
+├ìNDICE 
+ 
+PARTE A ÔÇö F├¡sica dos Personagens no Canvas 
+PARTE B ÔÇö Implementa├º├Áes de C├│digo: Sistemas Cr├¡ticos 
+  B.1  FlagSystem.js ÔÇö C├│digo Completo 
+  B.2  TrustSystem.js ÔÇö C├│digo Completo 
+  B.3  MascaraSystem.js ÔÇö C├│digo Completo 
+  B.4  DialogueSystem.js + DialogueBox.js 
+  B.5  TimeSystem.js + EconomySystem.js 
+  B.6  SceneManager.js 
+  B.7  Renderer.js + Player.js 
+PARTE C ÔÇö Dados JSON Completos para a Demo 
+  C.1  act1_week1.json ÔÇö todos os n├│s de di├ílogo Dias 1-7 
+  C.2  gareth.json + lyra.json + aldric.json 
+PARTE D ÔÇö Sess├úo de Implementa├º├úo: Ordem e Checkpoints 
+PARTE E ÔÇö Testes Manuais de Smoke Test (sem framework) 
+PARTE F ÔÇö Perfil Expandido: Aldric e Stenn para Demo 
+PARTE G ÔÇö Rotinas de NPC e Presen├ºa no Mundo 
+ 
+ 
+
+=== PAGE 2 ===
+PARTE A ÔÇö F├¡sica dos Personagens no Canvas 
+Ôùå 'F├¡sica' aqui significa: como os personagens existem no espa├ºo do Canvas ÔÇö 
+dimens├Áes, hitboxes, velocidades, colis├úo, schedules e regras de presen├ºa. Godot tinha 
+CharacterBody2D; na web, implementamos tudo manualmente. 
+ 
+A.1 ÔÇö Dimens├Áes e Hitboxes 
+Personagem 
+Sprite px 
+Exibi├º├úo 
+3x 
+Hitbox f├¡sica 
+(p├®s) 
+Hitbox 
+intera├º├úo 
+Velocidade (px/s 
+world) 
+Malfeitor 
+24├ù32 
+72├ù96 
+12├ù10 
+20├ù28 
+56 (nunca corre ÔÇö 
+design narrativo) 
+Lyra 
+18├ù26 
+54├ù78 
+10├ù8 
+16├ù22 
+72 (mais r├ípida ÔÇö 
+compensa├º├úo) 
+Gareth 
+22├ù32 
+66├ù96 
+12├ù10 
+20├ù28 
+44 (patrulha lenta) 
+Aldric 
+20├ù30 
+60├ù90 
+10├ù10 
+18├ù26 
+38 (deliberado, 
+pausado) 
+Davi 
+20├ù30 
+60├ù90 
+10├ù10 
+18├ù26 
+48 
+NPC an├┤nimo 
+16├ù24 
+48├ù72 
+8├ù8 
+14├ù20 
+52 
+ 
+­ƒö┤ CR├ìTICO: Malfeitor nunca corre. Pressionar shift n├úo aumenta velocidade. Isso ├® 
+design narrativo: ele est├í ferido, humilhado, sem raz├úo para pressa. M├íximo: +5% ao 
+segurar direcional por > 2s. 
+ 
+A.2 ÔÇö Implementa├º├úo de Colis├úo no Canvas 
+// actors/Player.js ÔÇö movimento com colis├úo AABB 
+class Player { 
+  constructor() { 
+    this.x = 80; this.y = 90; 
+    this.vx = 0; this.vy = 0; 
+    this.speed = 56; 
+    this.hitbox = { w: 12, h: 10, ox: 6, oy: 22 }; // offset da base do sprite 
+  } 
+ 
+  update(dt, colliders) { 
+    const dx = InputSystem.axis('x') * this.speed * dt; 
+    const dy = InputSystem.axis('y') * this.speed * dt; 
+    this.x = this._resolveX(this.x + dx, colliders); 
+    this.y = this._resolveY(this.y + dy, colliders); 
+    this._updateAnimation(dx, dy); 
+  } 
+ 
+  _resolveX(nx, cols) { 
+
+=== PAGE 3 ===
+    const hb = { x: nx + this.hitbox.ox, y: this.y + this.hitbox.oy, 
+                 w: this.hitbox.w,        h: this.hitbox.h }; 
+    for (const c of cols) 
+      if (this._overlaps(hb, c)) return this.x; // rejeita movimento 
+    return nx; 
+  } 
+  _resolveY(ny, cols) { 
+    const hb = { x: this.x + this.hitbox.ox, y: ny + this.hitbox.oy, 
+                 w: this.hitbox.w,             h: this.hitbox.h }; 
+    for (const c of cols) 
+      if (this._overlaps(hb, c)) return this.y; 
+    return ny; 
+  } 
+  _overlaps(a, b) { 
+    return a.x < b.x+b.w && a.x+a.w > b.x && 
+           a.y < b.y+b.h && a.y+a.h > b.y; 
+  } 
+} 
+ 
+A.3 ÔÇö Z-Ordering (quem fica na frente) 
+// renderer.js ÔÇö ordena├º├úo por posi├º├úo Y 
+function drawScene(entities) { 
+  // Ordenar por Y ÔÇö entidade mais ao sul aparece na frente 
+  const sorted = [...entities].sort((a, b) => { 
+    // Exce├º├úo: Berthilda sempre na frente (autoridade impl├¡cita) 
+    if (a.id === 'berthilda') return 1; 
+    if (b.id === 'berthilda') return -1; 
+    return a.y - b.y; 
+  }); 
+  for (const e of sorted) e.draw(ctx); 
+} 
+ 
+A.4 ÔÇö Zonas de Intera├º├úo e Di├ílogo 
+// NPC.js ÔÇö zona de intera├º├úo como c├¡rculo 
+class NPC { 
+  constructor(cfg) { 
+    this.id = cfg.id; 
+    this.x = cfg.x; this.y = cfg.y; 
+    this.interactRadius = 18; // pixels world-space 
+  } 
+ 
+  isPlayerNear(player) { 
+    const dx = player.x - this.x; 
+    const dy = player.y - this.y; 
+    return Math.sqrt(dx*dx + dy*dy) < this.interactRadius; 
+  } 
+ 
+  canInteract() { 
+
+=== PAGE 4 ===
+    // Berthilda bloqueada no Ato I e II 
+    if (this.id === 'berthilda' && GameState.act < 3) return false; 
+    // NPC com arco quebrado: retorna fala de rejei├º├úo 
+    if (TrustSystem.getArcState(this.id) === 'broken') return 'rejected'; 
+    return true; 
+  } 
+} 
+ 
+A.5 ÔÇö Schedules de NPC 
+NPC 
+Manh├ú (6-12h) 
+Tarde (12-18h) 
+Noite (18-23h) 
+Domingo especial 
+Gareth 
+Taverna ÔÇö cozinha 
+Taverna ÔÇö sal├úo 
+Taverna (S├íb: at├® 
+meia-noite) 
+Taverna ÔÇö ritmo 
+lento 
+Lyra 
+Casa / percurso 
+Pra├ºa central 
+Casa ÔÇö nunca sai 
+Casa 
+Aldric 
+Igreja (Qua: missa) 
+Igreja ou 
+caminhada 
+Igreja ÔÇö n├úo 
+recebe 
+Igreja 
+Berthilda 
+Casa 
+Casa 
+Casa 
+Jardim 6-10h ÔÇö 
+├║nico hor├írio 
+acess├¡vel 
+Davi 
+Jardim/campo 
+Jardim/est├║dio 
+Casa 
+Jardim 
+ 
+// TimeSystem.js ÔÇö getNPCLocation(npcId) 
+getNPCLocation(npcId) { 
+  const schedule = NPC_SCHEDULES[npcId]; 
+  const h = this.hour; 
+  const dow = this.dayOfWeek; 
+  for (const slot of schedule) { 
+    if (h >= slot.start && h < slot.end) { 
+      if (slot.days && !slot.days.includes(dow)) continue; 
+      return slot.location; 
+    } 
+  } 
+  return NPC_HOME[npcId]; 
+} 
+ 
+ 
+
+=== PAGE 5 ===
+PARTE B ÔÇö Implementa├º├Áes de C├│digo: Sistemas 
+Cr├¡ticos 
+B.1 ÔÇö FlagSystem.js ÔÇö C├│digo Completo 
+­ƒîÉ WEB: Singleton exportado. Todos os sistemas importam de FlagSystem.js. Zero 
+depend├¬ncia circular ÔÇö FlagSystem n├úo importa nada de outros sistemas. 
+ 
+// src/systems/FlagSystem.js 
+const _flags = { /* objeto com todas as flags do MasterBible ┬º1.6 */ }; 
+const _auditLog = []; 
+const PERMANENT = new Set([ 
+  'FLAG_NPC_LYRA_ARC_BROKEN','FLAG_VILLAGE_HOSTILE', 
+  'FLAG_PLAYER_POISON_USED','FLAG_ENDING_RELAPSE_LOCKED_IN' 
+]); 
+ 
+export function setFlag(id, value, source = '') { 
+  if (!(id in _flags)) { console.error(`Flag desconhecida: ${id}`); return; } 
+  if (PERMANENT.has(id) && _flags[id] === true && value === false) return; 
+  const old = _flags[id]; 
+  if (old === value) return; 
+  _flags[id] = value; 
+  _auditLog.push({ day: _getDay(), flag: id, old, value, source, ts: Date.now() 
+}); 
+  _handleCritical(id, value); 
+  _recalcEnding(); 
+} 
+ 
+export const getFlag = id => _flags[id]; 
+ 
+function _handleCritical(id, value) { 
+  if (!value) return; 
+  if (id === 'FLAG_NPC_LYRA_ARC_BROKEN') { 
+    _flags['FLAG_ENDING_SCORE'] = Math.min(_flags['FLAG_ENDING_SCORE'], 30); 
+    console.warn('­ƒö┤ LYRA_ARC_BROKEN ativada ÔÇö Reden├º├úo imposs├¡vel'); 
+  } 
+  if (id === 'FLAG_VILLAGE_HOSTILE') { 
+    _flags['FLAG_ENDING_REDEMPTION_AVAILABLE'] = false; 
+  } 
+} 
+ 
+function _recalcEnding() { 
+  let score = 0; 
+  if (_flags.FLAG_NPC_LYRA_ARC_COMPLETE)       score += 30; 
+  if (_flags.FLAG_NPC_BERTHILDA_APPROVED)      score += 30; 
+  if (_flags.FLAG_NPC_ALDRIC_FULL_REVEAL)      score += 15; 
+  if (!_flags.FLAG_PLAYER_MAGIC_USED_COUNT)    score += 15; 
+  if (_flags.FLAG_WORLD_STENN_CONFRONTED_PUBLIC) score += 10; 
+  if (_flags.FLAG_NPC_LYRA_ARC_BROKEN)         score -= 30; 
+
+=== PAGE 6 ===
+  if (_flags.FLAG_PLAYER_MAGIC_USED_COUNT >= 3) score -= 20; 
+  if (_flags.FLAG_PLAYER_POISON_USED)           score -= 15; 
+  if (_flags.FLAG_VILLAGE_HOSTILE)              score -= 25; 
+  _flags.FLAG_ENDING_SCORE = score; 
+  _flags.FLAG_ENDING_REDEMPTION_AVAILABLE = score >= 85; 
+  _flags.FLAG_ENDING_IMPASSE_AVAILABLE = score >= 50 && score < 85; 
+} 
+ 
+export function serialize()  { return { flags: {..._flags}, log: [..._auditLog] 
+}; } 
+export function deserialize(data) { 
+  Object.assign(_flags, data.flags); 
+  _auditLog.push(...(data.log || [])); 
+} 
+ 
+B.2 ÔÇö TrustSystem.js ÔÇö C├│digo Completo 
+// src/systems/TrustSystem.js 
+import { getFlag, setFlag } from './FlagSystem.js'; 
+ 
+const ARC = { HOSTILE:'hostile', NEUTRAL:'neutral', WARMING:'warming', 
+              TRUST:'trust', BROKEN:'broken', LOCKED:'locked' }; 
+ 
+// Perfis carregados do JSON e mutados em runtime 
+let _profiles = {}; 
+ 
+export async function init() { 
+  const npcs = 
+['gareth','lyra','aldric','davi','serena','nora','stenn','berthilda']; 
+  for (const id of npcs) { 
+    const r = await fetch(`data/npcs/${id}.json`); 
+    _profiles[id] = await r.json(); 
+  } 
+  _profiles.berthilda.arc_state = ARC.LOCKED; 
+} 
+ 
+export function applyDelta(npcId, deltas, contextScore = 0) { 
+  const p = _profiles[npcId]; 
+  if (!p) return; 
+  if (p.arc_state === ARC.LOCKED) return; 
+  if (npcId === 'lyra' && getFlag('FLAG_NPC_LYRA_ARC_BROKEN')) { 
+    // Ap├│s arco quebrado, s├│ penalidades passam 
+    Object.keys(deltas).forEach(k => { if (deltas[k] > 0) delete deltas[k]; }); 
+  } 
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v)); 
+  const ranges = { familiaridade:[-10,20], lealdade:[-10,15], respeito:[-
+10,15], 
+                   simpatia:[-10,15], medo:[0,15], curiosidade:[0,10] }; 
+  for (const [dim, delta] of Object.entries(deltas)) { 
+    // Medo >= 10 bloqueia ganhos de simpatia 
+
+=== PAGE 7 ===
+    if (dim === 'simpatia' && p.trust.medo >= 
+p.thresholds.medo_bloqueia_simpatia) continue; 
+    const finalDelta = Math.round(delta * (1 + contextScore)); 
+    const [mn, mx] = ranges[dim]; 
+    p.trust[dim] = clamp(p.trust[dim] + finalDelta, mn, mx); 
+  } 
+  _updateArcState(npcId); 
+  // Aldric: familiaridade m├¡nima garantida de 3 
+  if (npcId === 'aldric') p.trust.familiaridade = Math.max(3, 
+p.trust.familiaridade); 
+} 
+ 
+export function recordLie(npcId) { 
+  const p = _profiles[npcId]; 
+  if (!p) return; 
+  p.lies_detected++; 
+  if (npcId === 'lyra') { 
+    setFlag('FLAG_NPC_LYRA_ARC_BROKEN', true, 'lie_detected'); 
+    p.arc_state = ARC.BROKEN; 
+  } else { 
+    applyDelta(npcId, { lealdade: -3 }); 
+  } 
+} 
+ 
+function _updateArcState(npcId) { 
+  const p = _profiles[npcId]; 
+  if ([ARC.BROKEN, ARC.LOCKED].includes(p.arc_state)) return; 
+  const t = p.trust; 
+  const thresh = p.thresholds; 
+  let next = p.arc_state; 
+  if (t.lealdade <= thresh.ruptura_irreversivel) next = ARC.BROKEN; 
+  else if (t.familiaridade >= 8 && t.simpatia >= 6 && t.lealdade >= 6) next = 
+ARC.TRUST; 
+  else if (t.familiaridade >= 4 && t.simpatia >= 2) next = ARC.WARMING; 
+  else if (t.familiaridade >= 2 || t.medo < 3)    next = ARC.NEUTRAL; 
+  if (next !== p.arc_state) { 
+    p.arc_state = next; 
+    EventBus.emit('arc_changed', { npcId, arc: next }); 
+  } 
+} 
+ 
+export function tickDayEnd(currentDay) { 
+  for (const [id, p] of Object.entries(_profiles)) { 
+    if (p.arc_state === ARC.LOCKED) continue; 
+    const daysAbsent = currentDay - p.last_interaction_day; 
+    if (daysAbsent >= 2) applyDelta(id, { familiaridade: -1 }); 
+  } 
+} 
+ 
+export function tickWeekEnd() { 
+  const magicUsed    = getFlag('FLAG_PLAYER_MAGIC_USED_THIS_WEEK'); 
+  const authorityUsed = getFlag('FLAG_PLAYER_AUTHORITY_USED_THIS_WEEK'); 
+
+=== PAGE 8 ===
+  if (!magicUsed && !authorityUsed) 
+    for (const id of Object.keys(_profiles)) 
+      applyDelta(id, { medo: -1 }); 
+  setFlag('FLAG_PLAYER_MAGIC_USED_THIS_WEEK', false, 'week_reset'); 
+  setFlag('FLAG_PLAYER_AUTHORITY_USED_THIS_WEEK', false, 'week_reset'); 
+} 
+ 
+export const getTrust    = id => _profiles[id]?.trust; 
+export const getArcState = id => _profiles[id]?.arc_state ?? ARC.NEUTRAL; 
+export function serialize()  { return JSON.parse(JSON.stringify(_profiles)); } 
+export function deserialize(data) { _profiles = data; } 
+ 
+B.3 ÔÇö MascaraSystem.js ÔÇö C├│digo Completo 
+// src/systems/MascaraSystem.js 
+import * as TrustSystem from './TrustSystem.js'; 
+import { getFlag, setFlag } from './FlagSystem.js'; 
+import { ASPECT_DELTA_TABLE } from '../data/AspectTable.js'; 
+ 
+export function processChoice(npcId, aspect, nodeId, contextScore = 0) { 
+  let deltas = ASPECT_DELTA_TABLE[aspect]?.[npcId] ?? {}; 
+  deltas = { ...deltas }; // nunca mutar a tabela 
+ 
+  // Regra CULPA: 2┬¬ vez ÔåÆ delta ├À 2 
+  if (aspect === 'CULPA') { 
+    const p = TrustSystem.getProfile(npcId); 
+    if (p?.culpa_used) { 
+      for (const k of Object.keys(deltas)) deltas[k] = Math.floor(deltas[k] / 
+2); 
+    } else if (p) { 
+      p.culpa_used = true; 
+    } 
+  } 
+ 
+  // Regra AUTORIDADE: semanalmente trackada 
+  if (aspect === 'AUTORIDADE') setFlag('FLAG_PLAYER_AUTHORITY_USED_THIS_WEEK', 
+true, nodeId); 
+ 
+  // Regra MAGIA: contador 
+  if (aspect === 'MAGIA_LATENTE') { 
+    const count = getFlag('FLAG_PLAYER_MAGIC_USED_COUNT') + 1; 
+    setFlag('FLAG_PLAYER_MAGIC_USED_COUNT', count, nodeId); 
+    setFlag('FLAG_PLAYER_MAGIC_USED_THIS_WEEK', true, nodeId); 
+  } 
+ 
+  TrustSystem.applyDelta(npcId, deltas, contextScore); 
+} 
+ 
+export function isOptionVisible(option, npcId) { 
+  for (const f of option.hidden_when ?? []) if (getFlag(f)) return false; 
+  for (const f of option.visible_when ?? []) if (!getFlag(f)) return false; 
+
+=== PAGE 9 ===
+  return true; 
+} 
+ 
+export function isCriticalAspect(aspect) { 
+  return ['AUTORIDADE','MANIPULA├ç├âO'].includes(aspect); 
+} 
+ 
+B.4 ÔÇö DialogueSystem.js + DialogueBox.js 
+// src/systems/DialogueSystem.js 
+// Carrega JSONs de di├ílogo e prov├¬ acesso por node_id 
+ 
+const _db = new Map(); 
+ 
+export async function loadDialogues(week) { 
+  const r = await fetch(`data/dialogues/act1_week${week}.json`); 
+  const nodes = await r.json(); 
+  for (const node of nodes) _db.set(node.node_id, node); 
+} 
+ 
+export const getNode = id => _db.get(id) ?? null; 
+ 
+export function findTriggerable(scene, day, hour) { 
+  const candidates = []; 
+  for (const [id, node] of _db) { 
+    const t = node.trigger; 
+    if (t.type !== 'auto') continue; 
+    if (t.scene && t.scene !== scene) continue; 
+    if (t.day_range && (day < t.day_range[0] || day > t.day_range[1])) 
+continue; 
+    if (getFlag(`FLAG_DIALOGUE_${id}_SEEN`)) continue; // j├í viu 
+    candidates.push({ id, priority: t.priority ?? 0 }); 
+  } 
+  candidates.sort((a,b) => b.priority - a.priority); 
+  return candidates[0]?.id ?? null; 
+} 
+ 
+// src/ui/DialogueBox.js 
+// Controla o HTML #dialogue-box 
+import * as DialogueSystem from '../systems/DialogueSystem.js'; 
+import * as MascaraSystem from '../systems/MascaraSystem.js'; 
+import { setFlag } from '../systems/FlagSystem.js'; 
+import { applyDelta } from '../systems/TrustSystem.js'; 
+ 
+const box     = document.getElementById('dialogue-box'); 
+const nameEl  = document.getElementById('npc-name'); 
+const textEl  = document.getElementById('dialogue-text'); 
+const optsEl  = document.getElementById('options-container'); 
+const NPC_THEMES = { 
+  gareth:    { border: '#B45309', name: '#F59E0B' }, 
+
+=== PAGE 10 ===
+  lyra:      { border: '#1D4ED8', name: '#60A5FA' }, 
+  aldric:    { border: '#374151', name: '#9CA3AF' }, 
+  davi:      { border: '#065F46', name: '#34D399' }, 
+  berthilda: { border: '#1F2937', name: '#6B7280' }, 
+}; 
+ 
+let _resolve = null; 
+ 
+export function startDialogue(nodeId) { 
+  return new Promise(res => { 
+    _resolve = res; 
+    _loadNode(nodeId); 
+  }); 
+} 
+ 
+async function _loadNode(nodeId) { 
+  const node = DialogueSystem.getNode(nodeId); 
+  if (!node) { _endDialogue(); return; } 
+  setFlag(`FLAG_DIALOGUE_${nodeId}_SEEN`, true, 'dialogue'); 
+ 
+  // Aplicar tema do NPC 
+  const theme = NPC_THEMES[node.speaker] ?? {}; 
+  box.style.borderColor = theme.border ?? '#555'; 
+  nameEl.style.color    = theme.name  ?? '#fff'; 
+  nameEl.textContent = node.speaker.toUpperCase(); 
+ 
+  box.classList.remove('hidden'); 
+  optsEl.innerHTML = ''; 
+ 
+  // Typewriter 
+  await _typewriter(node.text); 
+ 
+  // Mostrar op├º├Áes ou fim 
+  const opts = (node.aspect_options ?? []) 
+    .filter(o => MascaraSystem.isOptionVisible(o, node.speaker)); 
+ 
+  if (opts.length === 0) { 
+    // Aplicar no_choice_result (SIL├èNCIO autom├ítico) 
+    const ncr = node.no_choice_result; 
+    if (ncr) { 
+      await new Promise(r => setTimeout(r, 800)); 
+      _applyEffects(node.speaker, ncr.effects); 
+      if (ncr.effects?.next_node) { _loadNode(ncr.effects.next_node); return; } 
+    } 
+    _endDialogue(); return; 
+  } 
+ 
+  // Renderizar op├º├Áes com delay escalonado 
+  opts.forEach((opt, i) => { 
+    const btn = document.createElement('button'); 
+    btn.className = `aspect-option aspect-${opt.aspect.toLowerCase()}`; 
+
+=== PAGE 11 ===
+    btn.innerHTML = 
+      `<span class='aspect-tag'>${opt.aspect}</span>` + 
+      `<span class='option-text'>${opt.text}</span>` + 
+      (MascaraSystem.isCriticalAspect(opt.aspect) ? '<span class=warn>ÔÜá</span>' 
+: ''); 
+    btn.style.animationDelay = `${i * 80}ms`; 
+    btn.addEventListener('click', () => _selectOption(node.speaker, opt)); 
+    // Atalho num├®rico 1-4 
+    optsEl.appendChild(btn); 
+  }); 
+} 
+ 
+function _applyEffects(npcId, effects) { 
+  if (!effects) return; 
+  MascaraSystem.processChoice(npcId, effects.aspect ?? 'SIL├èNCIO', ''); 
+  for (const [npc, deltas] of Object.entries(effects.trust_deltas ?? {})) 
+    applyDelta(npc, deltas); 
+  for (const f of effects.flags_set ?? []) 
+    setFlag(f, true, 'dialogue_effect'); 
+} 
+ 
+async function _selectOption(npcId, opt) { 
+  optsEl.innerHTML = ''; 
+  MascaraSystem.processChoice(npcId, opt.aspect, opt.id); 
+  _applyEffects(npcId, opt.effects); 
+  await new Promise(r => setTimeout(r, 300)); 
+  if (opt.effects?.next_node) { _loadNode(opt.effects.next_node); return; } 
+  _endDialogue(); 
+} 
+ 
+function _endDialogue() { 
+  box.classList.add('hidden'); 
+  if (_resolve) { _resolve(); _resolve = null; } 
+} 
+ 
+function _typewriter(text) { 
+  return new Promise(res => { 
+    textEl.textContent = ''; 
+    let i = 0; 
+    const DELAYS = { '.':250, '!':250, '?':250, ',':100 }; 
+    function next() { 
+      if (i >= text.length) { res(); return; } 
+      textEl.textContent += text[i]; 
+      const delay = DELAYS[text[i]] ?? 30; 
+      i++; 
+      setTimeout(next, delay); 
+    } 
+    next(); 
+  }); 
+} 
+ 
+
+=== PAGE 12 ===
+B.5 ÔÇö TimeSystem.js + EconomySystem.js 
+// src/systems/TimeSystem.js 
+import * as TrustSystem from './TrustSystem.js'; 
+import * as EconomySystem from './EconomySystem.js'; 
+import * as EventSystem from './EventSystem.js'; 
+ 
+export const TimeSystem = { 
+  act: 1, day: 1, hour: 8, dayOfWeek: 1, 
+  // Avan├ºar N horas in-game (1 hora Ôëê 1 a├º├úo do jogador) 
+  advance(hours = 1) { 
+    this.hour += hours; 
+    if (this.hour >= 24) { 
+      this.hour = 6; 
+      this.day++; 
+      this.dayOfWeek = (this.dayOfWeek % 7) + 1; 
+      TrustSystem.tickDayEnd(this.day); 
+      EventSystem.checkTriggers(this.day, this.hour, this.dayOfWeek); 
+      HUD.update(); 
+      SaveSystem.save(); // auto-save a cada novo dia 
+    } 
+    if (this.dayOfWeek === 1 && this.hour === 6) { // Seg manh├ú = in├¡cio de 
+semana 
+      TrustSystem.tickWeekEnd(); 
+      EconomySystem.onWeekStart(this.day); 
+    } 
+  }, 
+  label() { 
+    const t = this.hour < 12 ? 'MANH├â' : this.hour < 18 ? 'TARDE' 
+              : this.hour < 22 ? 'ENTARDECER' : 'NOITE'; 
+    return `DIA ${this.day} ÔÇö ${t}`; 
+  } 
+}; 
+ 
+// src/systems/EconomySystem.js 
+export const EconomySystem = { 
+  gold: 5, 
+  _dailyIncome: 0, 
+  RENT: 15, 
+ 
+  earn(amount, source = '') { 
+    this.gold += amount; 
+    HUD.updateGold(this.gold); 
+    AudioSystem.play('sfx_coin'); 
+  }, 
+ 
+  spend(amount) { 
+    if (this.gold < amount) return false; 
+    this.gold -= amount; 
+    HUD.updateGold(this.gold); 
+    return true; 
+  }, 
+
+=== PAGE 13 ===
+ 
+  onWeekStart(day) { 
+    // Aluguel cobrado toda Sexta (dayOfWeek = 5) 
+    // Verificar na Sexta-feira de cada semana 
+    if (TimeSystem.dayOfWeek !== 5) return; 
+    if (!this.spend(this.RENT)) { 
+      setFlag('FLAG_PLAYER_EVICTED', true, 'rent_failure'); 
+      HUD.notify('Gareth exigiu pagamento. Voc├¬ n├úo tinha.', 'danger'); 
+    } 
+  }, 
+ 
+  evictionRisk() { 
+    const daysLeft = (5 - TimeSystem.dayOfWeek + 7) % 7 || 7; 
+    const projected = this.gold + (this._dailyIncome * daysLeft); 
+    if (projected < 15) return 'high'; 
+    if (projected < 22) return 'medium'; 
+    return 'none'; 
+  } 
+}; 
+ 
+B.6 ÔÇö SceneManager.js 
+// src/scenes/SceneManager.js 
+let _current = null; 
+const _scenes = {}; 
+ 
+export function register(name, scene) { _scenes[name] = scene; } 
+ 
+export async function go(name, params = {}) { 
+  if (_current?.onExit) _current.onExit(); 
+  await _fadeOut(); 
+  _current = _scenes[name]; 
+  if (!_current) throw new Error(`Cena n├úo registrada: ${name}`); 
+  await _current.onEnter(params); 
+  await _fadeIn(); 
+  TimeSystem.advance(1); // transi├º├úo de cena = 1 hora in-game 
+} 
+ 
+export function update(dt) { _current?.update(dt); } 
+export function draw(ctx)  { _current?.draw(ctx); } 
+ 
+function _fadeOut() { 
+  return new Promise(res => { 
+    const overlay = document.getElementById('fade-overlay'); 
+    overlay.style.opacity = '1'; 
+    setTimeout(res, 300); 
+  }); 
+} 
+function _fadeIn() { 
+  return new Promise(res => { 
+
+=== PAGE 14 ===
+    const overlay = document.getElementById('fade-overlay'); 
+    overlay.style.opacity = '0'; 
+    setTimeout(res, 300); 
+  }); 
+} 
+ 
+B.7 ÔÇö Renderer.js: Pixel Art no Canvas 
+// src/engine/renderer.js 
+let _ctx, _sheets = {}; 
+ 
+export function init(canvas) { 
+  _ctx = canvas.getContext('2d'); 
+  _ctx.imageSmoothingEnabled = false; // NUNCA borrar sprites 
+} 
+ 
+export async function loadSheet(name, src) { 
+  const img = new Image(); 
+  img.src = src; 
+  await img.decode(); 
+  _sheets[name] = img; 
+} 
+ 
+// Desenhar frame de spritesheet 
+// frame: ├¡ndice na linha (0-based). row: linha na sheet (0-based). 
+export function drawSprite(sheet, frame, row, dx, dy, w, h, scale = 1) { 
+  const img = _sheets[sheet]; 
+  if (!img) return; 
+  _ctx.drawImage(img, frame * w, row * h, w, h, 
+                 Math.round(dx), Math.round(dy), w * scale, h * scale); 
+} 
+ 
+export function drawTile(sheet, tx, ty, dx, dy, size = 16) { 
+  const img = _sheets[sheet]; 
+  if (!img) return; 
+  _ctx.drawImage(img, tx * size, ty * size, size, size, 
+                 Math.round(dx), Math.round(dy), size * 3, size * 3); // 3x 
+scale 
+} 
+ 
+export function clear() { 
+  _ctx.fillStyle = '#0D0A1F'; 
+  _ctx.fillRect(0, 0, 320, 180); 
+} 
+ 
+// Sombra ellipse sob personagem 
+export function drawShadow(x, y) { 
+  _ctx.globalAlpha = 0.4; 
+  _ctx.fillStyle = '#000'; 
+  _ctx.beginPath(); 
+  _ctx.ellipse(x + 12, y + 30, 6, 2, 0, 0, Math.PI * 2); 
+
+=== PAGE 15 ===
+  _ctx.fill(); 
+  _ctx.globalAlpha = 1; 
+} 
+ 
+ 
+
+=== PAGE 16 ===
+PARTE C ÔÇö Dados JSON Completos para a Demo 
+Ôùå Estes s├úo os JSONs prontos para usar. Colocar em data/dialogues/act1_week1.json e 
+data/npcs/. O DialogueSystem.js os carrega por fetch. 
+ 
+C.1 ÔÇö gareth.json 
+{ 
+  "npc_id": "gareth", 
+  "display_name": "Gareth", 
+  "age": 45, 
+  "trust": { 
+    "familiaridade": 0, "lealdade": 0, "respeito": 0, 
+    "simpatia": 0, "medo": 2, "curiosidade": 3 
+  }, 
+  "arc_state": "neutral", 
+  "last_interaction_day": 0, 
+  "lies_detected": 0, 
+  "culpa_used": false, 
+  "thresholds": { 
+    "dialogo_desbloqueado": 5, 
+    "ruptura_irreversivel": -5, 
+    "medo_bloqueia_simpatia": 10 
+  }, 
+  "schedule": [ 
+    { "start": 6,  "end": 11, "location": "tavern_kitchen" }, 
+    { "start": 11, "end": 23, "location": "tavern_main", 
+      "saturday_override": { "end": 24 } } 
+  ], 
+  "sprite": "gareth", 
+  "portrait_states": ["neutral", "pleased", "suspicious", "angry"] 
+} 
+ 
+C.2 ÔÇö lyra.json 
+{ 
+  "npc_id": "lyra", 
+  "display_name": "Lyra", 
+  "age": 13, 
+  "trust": { 
+    "familiaridade": 0, "lealdade": 0, "respeito": 0, 
+    "simpatia": 0, "medo": 8, "curiosidade": 5 
+  }, 
+  "arc_state": "hostile", 
+  "last_interaction_day": 0, 
+  "lies_detected": 0, 
+  "culpa_used": false, 
+  "thresholds": { 
+    "dialogo_desbloqueado": 5, 
+
+=== PAGE 17 ===
+    "ruptura_irreversivel": -5, 
+    "medo_bloqueia_simpatia": 10 
+  }, 
+  "schedule": [ 
+    { "start": 7,  "end": 12, "location": "home_area", "days": [1,2,3,4,5] }, 
+    { "start": 12, "end": 18, "location": "town_square" }, 
+    { "start": 18, "end": 23, "location": "home_area" } 
+  ], 
+  "sprite": "lyra", 
+  "portrait_states": 
+["hostile_shouting","hostile","confused","quiet","neutral"] 
+} 
+ 
+C.3 ÔÇö aldric.json 
+{ 
+  "npc_id": "aldric", 
+  "display_name": "Frei Aldric", 
+  "age": 67, 
+  "trust": { 
+    "familiaridade": 3, "lealdade": 1, "respeito": 1, 
+    "simpatia": 2, "medo": 0, "curiosidade": 4 
+  }, 
+  "arc_state": "warming", 
+  "last_interaction_day": 0, 
+  "lies_detected": 0, 
+  "culpa_used": false, 
+  "thresholds": { 
+    "dialogo_desbloqueado": 4, 
+    "segredo_parcial": 6, 
+    "segredo_total": 8, 
+    "ruptura_irreversivel": -3, 
+    "medo_bloqueia_simpatia": 99 
+  }, 
+  "schedule": [ 
+    { "start": 7,  "end": 11, "location": "church", "days": [3], "label": 
+"missa" }, 
+    { "start": 7,  "end": 12, "location": "church" }, 
+    { "start": 12, "end": 18, "location": "church_or_walk" }, 
+    { "start": 18, "end": 22, "location": "church" } 
+  ], 
+  "special": { "familiaridade_min": 3 }, 
+  "sprite": "aldric", 
+  "portrait_states": ["calm", "thoughtful", "amused", "serious", "warm"] 
+} 
+ 
+C.4 ÔÇö act1_week1.json (estrutura completa ÔÇö excerto) 
+Ôùå O arquivo completo cont├®m todos os n├│s das cenas D1-01, D1-02, D1-03, D2-01, D3-01, 
+D5-01 e DREAM-01. Excerto mostrando 2 n├│s com estrutura completa para refer├¬ncia de 
+implementa├º├úo. 
+
+=== PAGE 18 ===
+ 
+[ 
+  { 
+    "node_id": "D1-02-001", 
+    "scene": "town_square", 
+    "trigger": { 
+      "type": "auto", 
+      "day_range": [1, 1], 
+      "conditions": [], 
+      "priority": 100 
+    }, 
+    "speaker": "lyra", 
+    "portrait_state": "hostile_shouting", 
+    "text": "Olha s├│ quem apareceu. O Destruidor de Aldeias. O Terror do 
+Norte...", 
+    "aspect_options": [ 
+      { 
+        "id": "D1-02-001-A", 
+        "aspect": "SARCASMO", 
+        "text": "Obrigado pelo resumo. Economizou minha apresenta├º├úo.", 
+        "visible_when": [], 
+        "hidden_when": [], 
+        "effects": { 
+          "trust_deltas": { "lyra": { "simpatia": -1, "familiaridade": 1, 
+"medo": -1 } }, 
+          "flags_set": ["FLAG_NPC_LYRA_D1_SARCASM"], 
+          "next_node": "D1-02-002-A" 
+        } 
+      }, 
+      { 
+        "id": "D1-02-001-B", 
+        "aspect": "CULPA", 
+        "text": "Voc├¬ tem raz├úo em cada palavra.", 
+        "visible_when": [], 
+        "hidden_when": ["FLAG_NPC_LYRA_CULPA_USED"], 
+        "effects": { 
+          "trust_deltas": { "lyra": { "simpatia": 1, "curiosidade": 2, "medo": 
+-1 } }, 
+          "flags_set": ["FLAG_NPC_LYRA_D1_CULPA", "FLAG_NPC_LYRA_CULPA_USED"], 
+          "next_node": "D1-02-002-B" 
+        } 
+      }, 
+      { 
+        "id": "D1-02-001-C", 
+        "aspect": "AUTORIDADE", 
+        "text": "Crian├ºa. Voc├¬ n├úo sabe de nada.", 
+        "visible_when": [], 
+        "hidden_when": [], 
+        "effects": { 
+          "trust_deltas": { "lyra": { "lealdade": -3, "medo": 2 } }, 
+          "flags_set": ["FLAG_VILLAGE_TRUST_HIT_1", 
+"FLAG_PLAYER_AUTHORITY_USED_THIS_WEEK"], 
+          "next_node": "D1-02-002-D" 
+
+=== PAGE 19 ===
+        } 
+      } 
+    ], 
+    "no_choice_result": { 
+      "aspect": "SIL├èNCIO", 
+      "text": "[Malfeitor olha para ela, acena com a cabe├ºa, continua 
+andando]", 
+      "effects": { 
+        "trust_deltas": { "lyra": { "curiosidade": 2, "familiaridade": 1 } }, 
+        "flags_set": ["FLAG_NPC_LYRA_D1_SILENCE"], 
+        "next_node": "D1-02-002-C" 
+      } 
+    }, 
+    "music_override": null 
+  } 
+] 
+ 
+ 
+
+=== PAGE 20 ===
+PARTE D ÔÇö Ordem de Implementa├º├úo: Sess├úo a 
+Sess├úo 
+Ôùå Para um desenvolvedor solo com IA. Cada sess├úo tem um deliverable claro ÔÇö c├│digo 
+que roda, n├úo que compila. No final de cada sess├úo, o jogo deve ser abr├¡vel. 
+ 
+Sess├úo 1 ÔÇö Esqueleto que abre (2-3h) 
+ÔÇó Criar index.html com canvas 320├ù180 + div#hud + div#dialogue-box + fade-overlay. 
+ÔÇó style.css: body sem margens, game-wrapper centralizado, canvas com image-rendering: 
+pixelated. 
+ÔÇó main.js: game loop (requestAnimationFrame), input.js b├ísico (WASD/Arrows). 
+ÔÇó renderer.js: clear() + drawSprite() com placeholder rect colorido. 
+ÔÇó CHECKPOINT: Abre no browser. Um quadrado se move com WASD. 
+ 
+Sess├úo 2 ÔÇö Sistemas Core (3-4h) 
+ÔÇó FlagSystem.js completo (c├│digo da Parte B.1). 
+ÔÇó TrustSystem.js + carregar gareth.json, lyra.json, aldric.json via fetch. 
+ÔÇó MascaraSystem.js com ASPECT_DELTA_TABLE. 
+ÔÇó save.js: saveGame() / loadGame() com localStorage. 
+ÔÇó CHECKPOINT: console.log(TrustSystem.getTrust('lyra')) mostra objeto correto. 
+ 
+Sess├úo 3 ÔÇö Di├ílogo funcionando (3-4h) 
+ÔÇó DialogueSystem.js: carrega act1_week1.json, indexa por node_id. 
+ÔÇó DialogueBox.js completo (c├│digo da Parte B.4). 
+ÔÇó Cena de teste: pressionar E aciona D1-01-004 (fala de Gareth sobre a vassoura). 
+ÔÇó Todas as 4 op├º├Áes de D1-01 funcionando com efeito visual de aspecto. 
+ÔÇó CHECKPOINT: Di├ílogo completo da cena D1-01 jog├ível do in├¡cio ao fim. 
+ 
+Sess├úo 4 ÔÇö Cena da Taverna (3-4h) 
+ÔÇó TavernScene.js: tilemap est├ítico (pode ser ret├óngulos coloridos por enquanto). 
+ÔÇó Player.js com colis├úo b├ísica contra paredes da taverna. 
+ÔÇó Gareth.js como NPC com zona de intera├º├úo de raio 18px. 
+ÔÇó SceneManager.js: fade e troca para town_square ao sair pela porta. 
+ÔÇó TimeSystem.js + HUD mostrando dia e hora. 
+ÔÇó CHECKPOINT: Andar pela taverna, falar com Gareth (D1-01), sair para a pra├ºa. 
+
+=== PAGE 21 ===
+ 
+Sess├úo 5 ÔÇö Ato I Dias 1-7 completo (4-5h) 
+ÔÇó TownSquareScene.js com Lyra (D1-02) e trigger autom├ítico no Dia 1. 
+ÔÇó ChurchScene.js com Aldric (D1-03, D3-01). 
+ÔÇó DaviScene.js com jardim (D5-01). 
+ÔÇó EconomySystem.js: renda de varrer, controle de aluguel na Sexta. 
+ÔÇó DREAM-01: tela escurecida + narra├º├úo typewriter + retorno ├á taverna. 
+ÔÇó CHECKPOINT: Demo jog├ível completa. Dias 1-7. Todas as cenas. Save autom├ítico. 
+ 
+Sess├úo 6 ÔÇö Polimento da Demo (2-3h) 
+ÔÇó Sprites reais (mesmo que simples ÔÇö formas geom├®tricas com cores corretas por 
+personagem). 
+ÔÇó ├üudio: Howler.js + mus_village_day.ogg + sfx_text_blip.wav. 
+ÔÇó TrustPanel.js: painel sem n├║meros, barras de 10 quadradinhos. 
+ÔÇó Notifica├º├Áes: HUD.notify() para alertas de renda e eventos. 
+ÔÇó CHECKPOINT: Demo pronta para playtest. URL abr├¡vel. Zero instala├º├úo. 
+ 
+ 
+
+=== PAGE 22 ===
+PARTE E ÔÇö Testes Manuais de Smoke Test 
+Ôùå Sem framework de teste. Smoke tests via console.assert() em test_smoke.js, executado 
+no browser. Abrir DevTools e checar por erros. 
+ 
+// tests/test_smoke.js ÔÇö importar no index.html antes de main.js 
+// Executar: abrir index.html, F12, ver Console 
+ 
+import { setFlag, getFlag } from '../src/systems/FlagSystem.js'; 
+import * as TrustSystem from '../src/systems/TrustSystem.js'; 
+import * as MascaraSystem from '../src/systems/MascaraSystem.js'; 
+ 
+async function runTests() { 
+  await TrustSystem.init(); 
+ 
+  // T1: Lyra ARC_BROKEN jamais reverte 
+  setFlag('FLAG_NPC_LYRA_ARC_BROKEN', true, 'test'); 
+  setFlag('FLAG_NPC_LYRA_ARC_BROKEN', false, 'test_revert'); 
+  console.assert(getFlag('FLAG_NPC_LYRA_ARC_BROKEN') === true, 
+    'ÔØî T1 FAIL: ARC_BROKEN reverteu'); 
+  console.log('Ô£à T1: ARC_BROKEN ├® permanente'); 
+ 
+  // T2: Familiaridade decai ap├│s 2 dias sem contato 
+  TrustSystem.applyDelta('gareth', { familiaridade: 5 }); 
+  const before = TrustSystem.getTrust('gareth').familiaridade; 
+  TrustSystem.tickDayEnd(1); 
+  TrustSystem.tickDayEnd(3); 
+  const after = TrustSystem.getTrust('gareth').familiaridade; 
+  console.assert(after === before - 1, `ÔØî T2 FAIL: FAM n├úo decaiu. Era 
+${before}, ├® ${after}`); 
+  console.log('Ô£à T2: Familiaridade decai corretamente'); 
+ 
+  // T3: Aldric FAM nunca cai abaixo de 3 
+  for (let i = 0; i < 20; i++) TrustSystem.tickDayEnd(i * 3); 
+  console.assert(TrustSystem.getTrust('aldric').familiaridade >= 3, 
+    'ÔØî T3 FAIL: Aldric FAM caiu abaixo de 3'); 
+  console.log('Ô£à T3: Aldric FAM m├¡nima garantida'); 
+ 
+  // T4: Medo >= 10 bloqueia ganhos de simpatia em Lyra 
+  TrustSystem.applyDelta('lyra', { medo: 10 }); 
+  const simBefore = TrustSystem.getTrust('lyra').simpatia; 
+  TrustSystem.applyDelta('lyra', { simpatia: 5 }); 
+  console.assert(TrustSystem.getTrust('lyra').simpatia === simBefore, 
+    'ÔØî T4 FAIL: Simpatia aumentou com medo >= 10'); 
+  console.log('Ô£à T4: Medo bloqueia simpatia'); 
+ 
+  // T5: Save e Load preserva estado 
+  setFlag('FLAG_NPC_GARETH_FIRST_JOB', true, 'test'); 
+  const saved = FlagSystem.serialize(); 
+
+=== PAGE 23 ===
+  setFlag('FLAG_NPC_GARETH_FIRST_JOB', false, 'test_overwrite'); 
+  FlagSystem.deserialize(saved); 
+  console.assert(getFlag('FLAG_NPC_GARETH_FIRST_JOB') === true, 
+    'ÔØî T5 FAIL: Save/Load n├úo preservou flag'); 
+  console.log('Ô£à T5: Save/Load funciona'); 
+ 
+  // T6: CULPA segunda vez tem delta reduzido 
+  TrustSystem.applyDelta('lyra', { simpatia: -10 }); // zerar 
+  MascaraSystem.processChoice('lyra', 'CULPA', 'test1'); 
+  const simAfter1 = TrustSystem.getTrust('lyra').simpatia; 
+  MascaraSystem.processChoice('lyra', 'CULPA', 'test2'); 
+  const simAfter2 = TrustSystem.getTrust('lyra').simpatia; 
+  console.assert(simAfter2 - simAfter1 < simAfter1, 
+    'ÔØî T6 FAIL: Segunda CULPA n├úo reduziu delta'); 
+  console.log('Ô£à T6: CULPA segunda vez reduzida'); 
+ 
+  console.log('--- Smoke tests conclu├¡dos ---'); 
+} 
+runTests().catch(console.error); 
+ 
+ 
+
+=== PAGE 24 ===
+PARTE F ÔÇö Perfis para Demo: Aldric e Stenn 
+F.1 ÔÇö Aldric: O que o jogador precisa saber na Demo 
+Ôùå Aldric na demo (Dias 1-7) ├® o NPC mais misterioso. Ele sabe quem Malfeitor ├®. O 
+jogador n├úo sabe que ele sabe. Esta tens├úo ├® o motor da curiosidade do jogador. 
+ 
+Comportamento de Aldric na Demo: 
+ÔÇó Nunca menciona o nome Kael. Nunca menciona o passado diretamente. 
+ÔÇó Frases com duplo sentido: 'algumas d├¡vidas se pagam de formas inesperadas' ├® sobre a 
+d├¡vida DELE com Malfeitor, n├úo o contr├írio. 
+ÔÇó Quando Malfeitor usa CURIOSIDADE com Aldric, ele responde ÔÇö mas sempre com uma 
+verdade que cria mais perguntas. 
+ÔÇó FAM inicial de 3 ├® vis├¡vel ao jogador no TrustPanel como 'Rosto familiar' ÔÇö sem 
+explica├º├úo de por qu├¬. 
+ 
+Linha narrativa de Aldric nos Dias 1-7 da demo: 
+Dia 
+Cena 
+Aldric diz (tom) 
+Subtexto real 
+1 
+D1-03 
+N├úo fiz por bondade. 
+(firme, direto) 
+Fez por culpa. Sabe que deve algo. 
+3-5 
+D3-01 
+Tem documentos para 
+copiar. (pr├ítico) 
+Quer Malfeitor pr├│ximo onde pode 
+observ├í-lo. 
+7 
+DREAM-
+01 
+Aparece no sonho, de 
+costas, jovem. 
+O jogador v├¬ sem entender. Conex├úo 
+futura. 
+ 
+F.2 ÔÇö Stenn: Mencionado mas n├úo encontrado na Demo 
+Ôùå Stenn n├úo aparece diretamente na demo (Dias 1-7). Mas ├® mencionado por Gareth e 
+nos rumores. Definir seu estado inicial para quando aparecer no Ato I, Semana 2. 
+ 
+Atributo 
+Valor 
+Notas 
+trust inicial 
+FAM:0 LEA:0 RES:0 
+SIM:0 MED:3 CUR:2 
+Ele conhece a reputa├º├úo de 
+Malfeitor 
+arc_state 
+neutral 
+Ainda avaliando utilidade 
+schedule 
+Sede Gov: 8-18h / 
+Taverna S├íb noite 
+Primeira possibilidade de 
+encontro: S├íb noite, Sem 2 
+ASPECT_DELTA 
+especial 
+MANIPULA├ç├âO: +2 RES 
++1 LEA 
+├Ünico NPC que respeita 
+manipula├º├úo 
+VULNERABILIDADE 
+V├¬ como fraqueza 
+explor├ível: +1 MED 
+Inverso da maioria dos NPCs 
+
+=== PAGE 25 ===
+ 
+ 
+
+=== PAGE 26 ===
+PARTE G ÔÇö Rotinas de NPC e Presen├ºa no Mundo 
+Ôùå Na demo, as cenas s├úo pequenas e os NPCs t├¬m posi├º├Áes semi-fixas. Esta parte define 
+onde cada NPC fica em cada cena e como o jogador os encontra. 
+ 
+G.1 ÔÇö Posi├º├Áes Default por Cena (Demo) 
+Cena 
+NPC presente 
+Posi├º├úo (world 
+px) 
+Condi├º├úo de presen├ºa 
+TavernScene 
+Gareth 
+x:200 y:120 
+Sempre, 6h-23h 
+TownSquare 
+Lyra 
+x:160 y:100 
+Dia 1: sempre. Dia 2+: 12h-
+18h 
+TownSquare 
+Alde├Áes an├┤nimos 
+(3) 
+x:80,120,200 
+y:90-120 
+Sempre durante o dia 
+ChurchScene 
+Aldric 
+x:160 y:90 
+Sempre, exceto Qua 
+manh├ú (missa = n├úo 
+interativo) 
+HerbGardenScene 
+Davi 
+x:140 y:110 
+Dias 4-7, 6h-18h 
+ 
+G.2 ÔÇö Regras de Presen├ºa e Aus├¬ncia 
+ÔÇó Se Malfeitor vai a uma cena e o NPC n├úo est├í l├í (fora do schedule), a cena est├í vazia 
+naquele local. Sem aviso, sem cutscene. 
+ÔÇó NPCs an├┤nimos t├¬m frases contextuais (pool de 5-8 por cena) que mudam por semana e 
+por estado de rumores ativos. 
+ÔÇó ├ìcone de intera├º├úo [E] aparece apenas quando: (1) NPC est├í presente, (2) dentro do raio 
+de 18px, (3) arc_state != locked e != broken. 
+ÔÇó Se arc_state == broken: ├¡cone aparece mas di├ílogo retorna uma fala curta de rejei├º├úo ÔÇö 
+sem op├º├Áes de aspecto. 
+ 
+G.3 ÔÇö Frases de Alde├Áes An├┤nimos (Demo) 
+Pool para TownSquare ÔÇö Semana 1: 
+ÔÇó 'N├úo acredito que o Frei deixou ele ficar.' 
+ÔÇó 'Gareth vai se arrepender disso.' 
+ÔÇó 'A menina da Lyra jogou uma pedra nele hoje. Ele nem reagiu.' 
+ÔÇó 'Dizem que ele ├® um mago. N├úo parece.' 
+ÔÇó 'Boa sorte pagar o aluguel varrendo o ch├úo de taverna.' (aparece se 
+FLAG_NPC_GARETH_FIRST_JOB = true) 
+ 
+
+=== PAGE 27 ===
+Ôùå Frases de alde├Áes s├úo ouvidas como narra├º├úo em it├ílico quando Malfeitor passa dentro 
+de raio de 30px. N├úo abrem caixa de di├ílogo completa ÔÇö apenas uma bolinha de 
+pensamento que aparece e desaparece em 2.5 segundos. 
+ 
+Ôÿá  FIM DO SUPPLEMENT BIBLE v2.0  Ôÿá 
+MALFEITOR  |  Stack Web  |  Demo: Ato I, Dias 1-7  |  Complemento ao MasterBible v4.0 
+

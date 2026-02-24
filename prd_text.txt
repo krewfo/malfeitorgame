@@ -1,0 +1,2293 @@
+﻿=== PAGE 1 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 1 / 30 
+Ôÿá  ÔÜö  Ôÿá 
+MALFEITOR 
+O Vilao que Sobreviveu 
+ 
+Game Design Document Expandido  +  Stack Completa de IA 
+ 
+v2.0  |  2025-2026 
+ 
+Atributo 
+Valor 
+Titulo 
+Malfeitor: O Vilao que Sobreviveu 
+Genero 
+RPG Narrativo + Social Sim + Moral Choices 
+Plataformas 
+PC Steam (principal) > Mobile iOS/Android (fase 2) > Console Switch 
+(fase 3) 
+Motor 
+Godot 4.3 LTS (recomendado) ou Unity 6 LTS 
+Estimativa de duracao 
+14-22 horas (primeira run) | 8-10h (segunda run com New Game+) 
+Rating pretendido 
+PEGI 16 / Teen (temas de culpa, luto, consequencias morais) 
+Modelo de negocio 
+Premium USD 12.99 + 2 DLCs narrativos 
+Time minimo para MVP 
+1 dev com IA assistida: 8-10 meses | Time de 3: 5-6 meses 
+ 
+ 
+
+=== PAGE 2 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 2 / 30 
+1. O Mundo: Aldeia de Crestfall 
+Crestfall nao e um cenario generico de fantasia medieval. E uma comunidade especifica com 
+historia, trauma e personalidade. Cada canto da aldeia tem uma razao para existir, e muitas dessas 
+razoes se conectam ao passado de Malfeitor de formas que o jogador descobre progressivamente. 
+ 
+­ƒÅÿ´©Å  1.1 Historia e Geografia de Crestfall 
+Crestfall fica no vale do Rio Ashwen, ao norte do Reino de Valdris. Com 340 habitantes, e 
+considerada pequena demais para ter guarnicao real permanente, mas grande demais para ser 
+ignorada pelo Governador Provincial. Fundada ha 180 anos por colonos fugindo de uma guerra 
+religiosa, a aldeia carrega dois traumas fundadores: a Seca Grande de 847 e o Saque de Edenvale 
+(uma aldeia vizinha que Malfeitor destruiu ha 12 anos, cujos sobreviventes migraram para Crestfall). 
+ 
+LORE CONECTADO 
+CONEXAO CRITICA: A Seca de 847 nao foi natural. Foi causada por um experimento magico de 
+Malfeitor que deu errado enquanto ele tentava criar um exercito de criaturas aridas. Ele nunca 
+soube que Crestfall foi afetada. Essa revelacao, quando ocorre no Ato II, e um dos momentos mais 
+pesados do jogo. 
+ 
+Mapa Mental de Crestfall - Locais Principais 
+Local 
+Funcao no Jogo 
+NPC Principal 
+Segredo Escondido 
+A Taverna do 
+Corvo Negro 
+Sua moradia, hub social, 
+rumores circulam aqui 
+Gareth (dono) 
+O subsolo guarda contrabando. 
+Gareth deve favores ao 
+Governador. 
+A Forja de Serena 
+Trabalho disponivel, 
+aprender 
+carpintaria/metal 
+Serena 
+A forja foi construida com metal 
+saqueado de Edenvale. Serena 
+nao sabe. 
+O Jardim de Ervas 
+de Davi 
+Herbalismo, coleta, 
+conversas longas 
+Davi 
+Davi catalogou efeitos de 
+venenos raros. Tem um diario 
+comprometedor. 
+A Igreja de Aldric 
+Missoes de escrita, 
+confissoes, revelacoes 
+Frei Aldric 
+O altar tem um compartimento 
+secreto com documentos sobre 
+Malfeitor. 
+A Casa de Lyra 
+Arco mais dificil, comeca 
+hostil 
+Lyra (13 anos) 
+A mae de Lyra sobreviveu ao 
+Saque mas enlouqueceu. Esta 
+confinada no quartinho. 
+O Mercado Central 
+Compra/venda, observar 
+dinamicas sociais 
+Comerciantes 
+anonimos 
+Ha um informante do Heroi 
+disfar├ºado de vendedor de 
+especiarias. 
+
+=== PAGE 3 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 3 / 30 
+Local 
+Funcao no Jogo 
+NPC Principal 
+Segredo Escondido 
+A Biblioteca 
+Publica 
+Pesquisa, historia de 
+Crestfall, pistas do lore 
+Bibliotecaria Nora 
+(idosa) 
+Um livro proibido descreve o 
+ritual que Malfeitor usou na 
+Seca de 847. 
+O Cemiterio 
+Flashbacks, meditacao, 
+encontros noturnos 
+Fantasma de 
+soldado (opcional) 
+O tumulo do pai de Lyra tem 
+uma carta que ele nunca 
+enviou. 
+A Beira do Rio 
+Ashwen 
+Coleta, eventos 
+aleatorios, cenas de 
+dialogo 
+Pescadores 
+ocasionais 
+O rio esconde fragmentos de 
+magia que Malfeitor deixou na 
+Seca de 847. 
+A Sede do 
+Governador 
+Missoes de 
+escrita/politica, perigo 
+latente 
+Governador Stenn 
+Stenn tem evidencias do que 
+Malfeitor e, mas nao as usa 
+ainda - quer algo em troca. 
+ 
+­ƒÆ░  1.2 A Economia de Crestfall 
+O dinheiro no jogo nao e so recurso. E medida de dignidade. Malfeitor precisa pagar aluguel de 15 
+moedas por semana. No inicio, ganha 2-3 moedas por dia fazendo trabalho bra├ºal. A pressao 
+economica e real nos primeiros 10 dias e depois se suaviza conforme ele aprende oficios melhores. 
+Fonte de Renda 
+Moedas/Dia 
+Horas de Jogo 
+Desbloqueia Quando 
+Varrer a taverna (Gareth) 
+2-3 
+Imediato, Ato I 
+Disponivel desde o Dia 1 
+Coleta de ervas (Davi) 
+4-6 
+Ato I, semana 2 
+Apos conversa inicial com Davi 
+Reparos de carpintaria 
+8-12 
+Ato I, semana 3 
+Apos aprender basico com Serena 
+Copiar documentos 
+(Stenn) 
+10-15 
+Ato II 
+Apos Stenn decidir usar Malfeitor 
+Vender remedios (Davi) 
+15-25 
+Ato II 
+Apos dominar herbalismo intermediario 
+Cozinhar para a taverna 
+12-20 
+Ato II 
+Apos Gareth confiar o suficiente 
+Ensinar leitura (Lyra) 
+0 moedas 
+Ato II 
+Nao paga em dinheiro, paga em 
+confianca 
+Magia clandestina 
+50+ / alto 
+custo moral 
+Ato III 
+Apenas se Malfeitor aceitar essa rota 
+ 
+­ƒôà  1.3 O Calendario de Crestfall 
+O jogo usa um calendario de 4 semanas de 7 dias, totalizando 28 dias in-game por ato. Cada dia 
+tem eventos fixos (rotinas dos NPCs) e eventos aleatorios (1-3 por semana). O jogador nunca sabe 
+quando um evento aleatorio vai ocorrer, o que cria tensao de rotina quebrada. 
+
+=== PAGE 4 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 4 / 30 
+Dia da Semana 
+Rotina Especial 
+NPC com Horario Unico 
+Evento Possivel 
+Segunda (Dia do 
+Mercado) 
+Mercado cheio, precos 
+variam 
+Todos os NPCs no 
+mercado de manha 
+Rumores novos se espalham 
+no mercado 
+Terca 
+Dia comum, trabalho 
+disponivel 
+Davi faz coleta no campo 
+Encontro aleatorio no 
+caminho do campo 
+Quarta 
+Aldric tem missa de 
+manha 
+Todos vao a igreja 
+(opcional para Malfeitor) 
+Se Malfeitor for a missa, 
+Berthilda nota 
+Quinta 
+Dia de limpeza publica 
+Lyra limpa o jardim da 
+casa 
+Chance de ajudar Lyra sem 
+parecer forcado 
+Sexta (Dia do 
+Pagamento) 
+Malfeitor deve pagar 
+aluguel 
+Gareth esta de mau 
+humor se nao receber 
+Evento critico se nao tiver 
+dinheiro 
+Sabado (Noite 
+da Taverna) 
+Noite social, NPCs na 
+taverna 
+Todos os adultos 
+presentes 
+Melhor momento para 
+conversas profundas 
+Domingo 
+Dia de descanso, ritmo 
+lento 
+Berthilda planta no jardim 
+Unico momento de falar com 
+Berthilda em paz 
+ 
+ 
+
+=== PAGE 5 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 5 / 30 
+2. Personagens - Perfis Expandidos 
+ÔÜö´©Å  2.1 Malfeitor - O Protagonista 
+Identidade Verdadeira: 
+Kael Ashmore. Filho de alquimista de 
+Crestfall (ironia tragica que o jogador so 
+descobre no Ato III). Abandonou o nome aos 
+22 anos apos o rei Valdris executar sua 
+familia sob falsa acusacao de traicao. 
+Passou 20 anos construindo poder para 
+destruir Valdris. Destruiu aldeias que 
+financiavam o reino. Mata com justificativa 
+que nunca comunicou a ninguem. 
+Tracos de Personalidade Distintos: 
+ÔÇó 
+Sarcasmo como mecanismo de 
+defesa, nao cruelidade 
+ÔÇó 
+Perfeccionismo residual - faz tudo 
+bem ou nao faz 
+ÔÇó 
+Memoria excepcional que o 
+assombra: lembra de cada rosto 
+ÔÇó 
+Desconforto com bondade genuina - 
+suspeita de motivos 
+ÔÇó 
+Fascinacao secreta por coisas 
+simples: pao quentinho, criancas 
+brincando 
+Linha de Evolucao por Rota: 
+Rota 
+Estado 
+Mental 
+Fala 
+Caracteristica 
+Reden├º├úo 
+Aceita culpa, 
+procura 
+sentido 
+Nao posso 
+desfazer. Mas 
+posso construir. 
+Impasse 
+Resignado, 
+sem 
+esperanca 
+O mundo nao 
+quer minha 
+mudan├ºa. 
+Entendido. 
+Recaida 
+Cinismo 
+reconquistado 
+Tentei ser bom. 
+Fui idiota. Ja sei 
+o que sou. 
+O 
+Segredo 
+Confuso, 
+identidade 
+fraturada 
+Se tudo era 
+mentira, o que 
+sobra de 
+verdade? 
+ 
+­ƒæÑ  2.2 Perfis Profundos dos NPCs 
+LYRA ÔÇö 13 anos | A Crianca com Odio de Adulto 
+LYRA ÔÇö PERFIL COMPLETO 
+HISTORIA: Seu pai, Capitao Edric, foi morto durante o Saque de Edenvale quando Lyra tinha 7 
+anos. Ela nao estava la, mas viu o corpo chegar. Sua mae entrou em colapso e nunca se 
+recuperou totalmente. Lyra criou a si mesma com a ajuda de Berthilda. Ela e inteligente, raivosa e 
+nao esconde nenhum dos dois. 
+COMPORTAMENTO INICIAL: Joga pedras em Malfeitor. Espalha rumores. Se recusa a olhar nos 
+olhos dele. 
+O QUE ELA PRECISA (que ela nao sabe): Alguem que nao fuja da sua raiva. Que aguente sem 
+reagir. Que prove nao por palavras mas por tempo. 
+
+=== PAGE 6 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 6 / 30 
+GATILHO DE MUDANCA: Descobrir que Malfeitor sabe ler. Ela precisa aprender a ler para 
+entender os documentos da pensao que recebe do reino pelo pai morto. Nao ha mais ninguem 
+disponivel para ensinar. 
+LINHA VERMELHA: Se Malfeitor mentir para Lyra mesmo uma vez e ela descobrir, o arco dela 
+fecha permanentemente. Ela nunca mais fala com ele. O jogo aceita esse resultado. 
+ 
+FREI ALDRIC ÔÇö 67 anos | O Salvador com Agenda 
+FREI ALDRIC ÔÇö PERFIL COMPLETO 
+HISTORIA: Ex-mago da corte de Valdris que desertou apos a execucao da familia de Kael 
+(Malfeitor) - a qual ele testemunhou e nao impediu. Carrega culpa ha 20 anos. Salvou Malfeitor nao 
+por bondade pura: precisava de penitencia propria. Aldric e a unica pessoa em Crestfall que sabe 
+quem Malfeitor realmente foi e que seu verdadeiro nome e Kael. 
+COMPORTAMENTO: Amigavel com limites claros. Nunca revela o que sabe antes do momento 
+certo. Usa parabolass e metaforas. Frustra Malfeitor propositalmente. 
+SEGREDO CENTRAL: Aldric tem os documentos reais da execucao da familia de Kael, provando 
+que o Rei Valdris mentiu. Esses documentos poderiam redimir Malfeitor perante o Reino inteiro - 
+ou condena-lo ainda mais dependendo de como sao usados. 
+ARCO: Aldric quer absolvicao, nao apenas o bem de Malfeitor. No final secreto, isso se torna uma 
+traicao disfar├ºada de cuidado. 
+ 
+BERTHILDA ÔÇö 78 anos | A Memoria da Aldeia 
+BERTHILDA ÔÇö PERFIL COMPLETO 
+HISTORIA: Naceu em Crestfall, nunca saiu. Conheceu quatro geracoes de familias. Sabe quem 
+comecou quais brigas, quem tem segredos e quem fingia nao ter. Conhece o pai de Malfeitor de 
+vista - eram criancas na mesma epoca. Nao sabe que Malfeitor e filho dele. 
+COMPORTAMENTO: Silencio gelado. Nao e cruel explicitamente. Apenas nao reconhece a 
+existencia de Malfeitor. Esse silencio e mais pesado que qualquer insulto. 
+O QUE ELA GUARDOU: Berthilda sabe sobre a Seca de 847 que outros esqueceram. E a unica 
+que liga os pontos quando a verdade emerge. 
+CONDICAO PARA MUDANCA: Berthilda so muda de opiniao se duas condicoes ocorrerem: 
+Malfeitor descobrir quem foi seu pai E tomar uma acao publica de sacrificio pessoal pela aldeia. 
+Ambos no Ato III. 
+IMPORTANCIA SISTEMICA: A aprovacao de Berthilda e o desbloqueio do final de Reden├º├úo 
+Plena. Sem ela, o maximo alcancavel e o Impasse Tragico. 
+ 
+NPC 
+Trauma Central 
+Precisa de Malfeitor Para 
+Ponto de Ruptura 
+Gareth (45a) 
+Faliu uma vez, quase 
+perdeu tudo. Desconfia 
+de quem parece carente. 
+Alguem que pague em dia e 
+nao traga drama 
+Malfeitor envolver a 
+taverna em algum 
+problema politico 
+
+=== PAGE 7 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 7 / 30 
+NPC 
+Trauma Central 
+Precisa de Malfeitor Para 
+Ponto de Ruptura 
+Serena (29a) 
+Pai morreu na guerra. 
+Aprendeu a forjar 
+sozinha. Nao pede ajuda. 
+Provar que pode confiar 
+antes de qualquer coisa 
+Malfeitor tentar 'consertar' 
+algo dela sem permissao 
+Davi (38a) 
+Obsessao por 
+conhecimento esconde 
+medo de irrelevancia. 
+Um objeto de estudo sem 
+julgamentos 
+Malfeitor recusar 
+responder uma pergunta 
+sobre seu passado 
+Gov. Stenn 
+(52a) 
+Deve favores para nobres 
+perigosos. Vive com 
+medo encoberto de 
+autoridade. 
+Um agente que faca coisas 
+que ele nao pode fazer 
+abertamente 
+Malfeitor descobrir o 
+contrabando no subsolo da 
+taverna 
+Nora - 
+Bibliotecaria 
+(71a) 
+Perdeu todos os livros 
+raros num incendio por 
+negligencia. Nao perdoa 
+descuido. 
+Alguem que cuide dos livros 
+restantes com reverencia 
+Malfeitor danificar qualquer 
+item da biblioteca 
+ 
+ 
+
+=== PAGE 8 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 8 / 30 
+3. Sistema de Dialogo MASCARA ÔÇö Especificacao 
+Completa 
+­ƒÄ¡  3.1 Arquitetura do Sistema 
+O sistema MASCARA (Modulacao Afetiva de Status, Contexto e Resposta Adaptativa) funciona em 
+tres camadas simultaneas: o que Malfeitor diz (conteudo), como ele diz (aspecto) e o que o NPC 
+interpreta (percepcao). Essas tres camadas podem divergir, criando drama organico. 
+ 
+EXEMPLO DO SISTEMA EM ACAO 
+EXEMPLO PRATICO: Malfeitor ajuda Lyra a carregar lenha. Opcoes: 
+(A) SINCERIDADE + conteudo util = Lyra fica confusa mas nao rejeita. Score +1 confianca. 
+(B) SARCASMO + conteudo util = 'Que surpresa, uma pedra que carrega peso.' Lyra interpreta 
+como condescendencia. Score -1 confianca. 
+(C) VULNERABILIDADE + conteudo util = 'Eu precisava fazer algo util hoje.' Lyra para. Olha. Nao 
+responde. Score neutro mas abre nova branch de dialogo. 
+(D) SILENCIO = Malfeitor simplesmente ajuda sem dizer nada. Lyra nao sabe como reagir. Score 
++2 confianca (acoes falam mais). 
+ 
+­ƒÆ¼  3.2 Os 8 Aspectos de Dialogo 
+Aspecto 
+O Que Comunica 
+NPCs que 
+Respondem 
+Bem 
+NPCs que 
+Desconfiam 
+Custo de Uso 
+SINCERIDADE 
+Malfeitor fala o que 
+realmente pensa, 
+sem filtro 
+Gareth, Serena 
+Stenn, Davi 
+(acha ingenuo) 
+Vulnerabilidade 
+real, pode 
+machucar 
+SARCASMO 
+Distancia emocional 
+disfarcada de 
+humor 
+Davi (acha 
+intelectualmente 
+estimulante) 
+Lyra, Berthilda 
+Bloqueia conexao 
+profunda 
+VULNERABILIDADE 
+Admite fraqueza, 
+medo, incerteza 
+Aldric, Lyra 
+(avancado) 
+Stenn (ve como 
+fraqueza 
+exploravel) 
+Alto custo 
+emocional, 
+dificulta saves 
+seguintes 
+MANIPULACAO 
+Usa verdades para 
+criar impressao 
+falsa 
+Stenn 
+(reconhece e 
+respeita) 
+Aldric (detecta 
+imediatamente) 
+Custo moral 
+permanente se 
+descoberto 
+CULPA 
+Aceita 
+responsabilidade 
+sem pedido 
+Lyra (abertura 
+minima), 
+Berthilda 
+Gareth (v├¬ 
+como 
+autopiedade) 
+Funciona uma vez 
+por NPC, repetir 
+desvaloriza 
+
+=== PAGE 9 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 9 / 30 
+Aspecto 
+O Que Comunica 
+NPCs que 
+Respondem 
+Bem 
+NPCs que 
+Desconfiam 
+Custo de Uso 
+CURIOSIDADE 
+Faz perguntas 
+genuinas, sem 
+agenda 
+Davi, Nora 
+Gareth (acha 
+suspeito) 
+Baixo custo, alto 
+ganho de 
+informacao 
+AUTORIDADE 
+Residuo do Lorde: 
+fala com convic├º├úo 
+natural 
+Aldeaos 
+anonimos 
+Todos os NPCs 
+principais 
+(causa rejeicao) 
+Funciona em 
+crises, destr├│i 
+relacoes 
+cotidianas 
+SILENCIO 
+Nao responde, 
+apenas age 
+Lyra (poderoso), 
+Serena 
+Davi (precisa de 
+resposta verbal) 
+Zero custo, 
+resultado 
+imprevisivel 
+ 
+­ƒôØ  3.3 Dialogos de Alta Fidelidade ÔÇö Exemplos Reais 
+Cena: Confronto com Lyra na Praca ÔÇö Dia 1 
+SCRIPT DE CENA ÔÇö EXEMPLO 
+CONTEXTO: Malfeitor sai pela primeira vez. Lyra o ve e grita para todo mundo ouvir. 
+ 
+LYRA: 'Olha so quem apareceu. O Destruidor de Aldeias. O Terror do Norte. Que nome grande 
+para um homem que mal consegue carregar agua.' 
+ 
+OPCOES (cada uma com aspecto visivel para o jogador): 
+[SARCASMO] 'Obrigado pelo resumo. Economizou minha apresentacao.' 
+  > Lyra: olho no olho, furiosa. Respeita a compostura mas registra. Aldeaos riem nervosos. 
+ 
+[CULPA] 'Voce tem razao em cada palavra.' 
+  > Lyra: para. Nao esperava isso. Confusa. Menos satisfeita do que imaginou que ficaria. 
+ 
+[SILENCIO] Malfeitor olha para ela, acena com a cabeca e continua andando. 
+  > Lyra: 'OLHE PARA MIM QUANDO EU ESTIVER FALANDO!' Ela jogou uma pedra. Errou. 
+  > Aldeaos ficam desconfortaveis. Lyra parece menor. Malfeitor nao reagiu. 
+ 
+[AUTORIDADE] 'Crianca. Voce nao sabe de nada.' 
+  > ERRO CRITICO. Todos os aldeaos presentes registram isso negativamente. Lyra chora de 
+raiva. 
+ 
+Cena: Noite da Taverna ÔÇö Semana 3 ÔÇö Gareth confessa algo 
+SCRIPT DE CENA ÔÇö EXEMPLO 
+
+=== PAGE 10 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 10 / 30 
+CONTEXTO: E Sabado a noite. Gareth bebeu um pouco mais que o normal. Malfeitor ajudou a 
+lavar os copos. Estao sozinhos. 
+ 
+GARETH: 'Voce sabe o que e mais esquisito? Eu prefiro ter voce aqui do que aquele menestrel 
+que ficou um mes. Pelo menos voce nao canta.' 
+ 
+OPCOES: 
+[CURIOSIDADE] 'O que aconteceu com o menestrel?' 
+  > Gareth ri. Conta uma historia longa e divertida. Conversa avanca para territorio pessoal. 
+ 
+[VULNERABILIDADE] 'Obrigado. Preciso ouvir isso mais do que voce imagina.' 
+  > Gareth para. Olha para Malfeitor diferente. 'Bebe alguma coisa.' Primeira vez que ofereceu. 
+ 
+[SARCASMO] 'O bar sobreviveu ao vilao final. E um milagre narrativo.' 
+  > Gareth gargalha genuinamente. Mas o momento profundo passou. 
+ 
+[SILENCIO] Malfeitor apenas continua limpando o copo. 
+  > Gareth: 'Voce e estranho, sabia?' Pausa. 'Mas nao do jeito ruim.' Continua limpando o balcao. 
+ 
+ 
+
+=== PAGE 11 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 11 / 30 
+4. Sistemas de Jogo ÔÇö Especificacao Tecnica 
+Completa 
+­ƒöÉ  4.1 O Sistema de Confianca ÔÇö Arquitetura Interna 
+Cada NPC tem um PERFIL DE CONFIANCA com 6 dimensoes independentes. Nao existe um 
+numero unico de reputacao. O jogador so ve o comportamento do NPC, nunca os numeros. 
+ 
+Dimensao 
+O Que Mede 
+Como Aumenta 
+Como Cai 
+Impacto em 
+Jogo 
+FAMILIARIDADE 
+Quanto tempo passou 
+juntos 
+Interacoes 
+cotidianas, qualquer 
+que seja 
+Ficar dias sem 
+contato (-1/dia) 
+Desbloqueia 
+opcoes de 
+dialogo 
+LEALDADE 
+Acredita que Malfeitor 
+nao o trai 
+Defender o NPC 
+publicamente, 
+honrar promessas 
+Mentir, usar o NPC 
+para ganho proprio 
+Determina 
+se NPC 
+guarda 
+segredos 
+RESPEITO 
+Acha Malfeitor 
+competente 
+Completar tarefas 
+bem feitas, ter 
+conhecimento 
+Falhar em tarefas, 
+ser arrogante 
+incompetente 
+Abre 
+trabalhos 
+melhores e 
+mais pagos 
+SIMPATIA 
+Sente afeicao pessoal 
+Vulnerabilidade, 
+humor no contexto 
+certo 
+Sarcasmo mal-
+timed, frieza 
+repetida 
+Conversa 
+se torna 
+mais rica e 
+pessoal 
+MEDO 
+Residual da 
+reputacao de vilao 
+Acoes de 
+autoridade, uso de 
+magia 
+Tempo, demonstrar 
+fraqueza genuina 
+Bloqueia 
+simpatia 
+enquanto 
+alto, protege 
+de ataques 
+CURIOSIDADE 
+Quer entender quem 
+Malfeitor e 
+Misterio calculado, 
+historias parciais 
+Revelar tudo de 
+uma vez, ser 
+previsivel 
+Mant├®m o 
+NPC 
+engajado 
+mesmo com 
+medo 
+ 
+­ƒöº  4.2 Sistema de Oficios ÔÇö Especificacao de Cada Um 
+HERBALISMO ÔÇö Arvore de Progressao 
+
+=== PAGE 12 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 12 / 30 
+Nivel 
+Nome 
+Como Aprende 
+O Que Produce 
+Aplicacao Moral 
+1 
+Coleta Basica 
+Davi mostra as plantas 
+mais comuns 
+Cha calmante, 
+cataplasma simples 
+Cura a mae de 
+Lyra de uma 
+tosse (abre 
+branch) 
+2 
+Identificacao 
+Erro: cria um remedio 
+errado e passa mal 
+Remedios especificos 
+por sintoma 
+Pode curar a mae 
+de Lyra (cena 
+emocional unica) 
+3 
+Combinacao 
+Descoberta propria + 
+diario de Davi 
+Elixires de mais longa 
+duracao 
+Pode criar 
+sonifero (uso 
+ambiguo: bom ou 
+mal) 
+4 
+Venenos 
+Leitura de livro proibido 
+na biblioteca 
+Venenos de varios 
+tipos de efeito 
+ESCOLHA 
+MORAL: Stenn 
+pede um veneno 
+'discreto' 
+5 
+Alquimia Herbal 
+Combinar com magia 
+latente residual 
+Compostos unicos 
+nao documentados 
+Pode restaurar a 
+sanidade da mae 
+de Lyra 
+permanentemente 
+ 
+MAGIA LATENTE ÔÇö O Sistema Mais Perigoso 
+MAGIA LATENTE ÔÇö DESIGN DETALHADO 
+A magia de Malfeitor nao desapareceu. Ela dorme. Conforme o jogo avanca, fragmentos voltam de 
+formas incontrolaveis: um objeto se move sozinho quando Malfeitor fica frustrado; uma planta 
+cresce mais rapido perto dele; seus sonhos interferem na realidade ao redor. 
+NIVEL 1 - INVOLUNTARIO (Ato I final): Magia acontece sem controle. Malfeitor nao percebe, mas 
+NPCs notam. 
+NIVEL 2 - CONSCIENTE MAS INSTAVEL (Ato II): Malfeitor pode TENTAR usar magia. 60% de 
+chance de falhar. Falhas sao vis├¡veis. 
+NIVEL 3 - CONTROLAVEL COM CUSTO (Ato III): Magia funciona, mas cada uso cria uma 'marca' 
+visivel no sprite de Malfeitor. NPCs reconhecem. Confianca cai 20% em todos os NPCs presentes. 
+NIVEL 4 - DOMINIO (apenas rota Recaida): Malfeitor abraca a magia. Isso e tecnicamente o 
+'poder', mas fecha os finais de Reden├º├úo e Impasse. So o final Recaida e O Segredo restam. 
+ 
+­ƒÄ▓  4.3 Sistema de Eventos Dinamicos 
+Alem da historia principal, Crestfall tem um sistema de eventos que ocorrem independentemente do 
+jogador. Esses eventos criam oportunidades, crises e revelacoes nao roteirizadas. 
+
+=== PAGE 13 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 13 / 30 
+Evento 
+Trigger 
+Janela de 
+Tempo 
+Consequencia Se 
+Ignorado 
+Consequencia 
+Se Envolvido 
+Doenca de Berthilda 
+Semana 4 
+automaticamente 
+3 dias para 
+agir 
+Berthilda fica de 
+cama, nao interage 
+por 2 semanas 
+Usar herbalismo 
+para ajudar: 
+primeiro crack no 
+gelo dela 
+Divida de Gareth 
+Randomico, 
+semana 3-5 
+5 dias 
+Gareth fecha a 
+taverna 2 dias 
+(Malfeitor sem 
+moradia!) 
+Malfeitor pode 
+salvar a taverna 
+com dinheiro ou 
+com conexao 
+politica 
+Fuga de informacao 
+Stenn libera rumor 
+de que Malfeitor e 
+vilao confirmado 
+Imediato, 4 
+dias de crise 
+Todos os NPCs 
+recuam no nivel de 
+confianca 
+Descobrir quem 
+liberou e enfrentar 
+Stenn diretamente 
+Retorno de ex-
+soldado 
+Um soldado de 
+Edenvale 
+reconhece 
+Malfeitor 
+Ato II, semana 
+6 
+Soldado vai a 
+Stenn, processo 
+de expulsao 
+comeca 
+Malfeitor pode 
+falar com o 
+soldado antes - 
+resultado 
+imprevisivel 
+Incendio no deposito 
+Acidental, 
+randomico 
+Noite, 1 hora 
+de acao 
+Parte do mercado 
+destruida, NPCs 
+mais ansiosos 
+Malfeitor agir 
+primeiro na crise 
+muda percepcao 
+coletiva 
+drasticamente 
+Chegada de 
+mensageiro real 
+Heroi mandou 
+verificar 
+sobreviventes de 
+Malfeitor 
+Ato III, fixo 
+Mensageiro 
+encontra provas, 
+Heroi volta em 7 
+dias 
+Malfeitor 
+interceptar 
+mensageiro: 
+decisao moral 
+pesada 
+ 
+­ƒîÖ  4.4 O Sistema de Sonhos ÔÇö Flashbacks Jogaveis 
+Todo Ato tem uma sequencia de sonho jogavel que ocorre durante a noite. Esses sonhos sao a 
+unica vez que o jogador ve o passado de Malfeitor em primeira pessoa. A mecanica dos sonhos e 
+diferente do jogo principal: controlada, linear, sem escolha ÔÇö voce apenas testemunha. 
+Sonho 
+Ato 
+O Que Mostra 
+Mecanica Unica 
+Impacto 
+Narrativo 
+O Tribunal 
+Ato I, 
+Semana 
+1 
+A execucao da familia de 
+Kael pelo Rei Valdris 
+Voce e Kael, jovem, 
+tentando correr. Nao 
+consegue. 
+Humaniza 
+completamente 
+Malfeitor. Nao 
+tem escolha. 
+O Primeiro Saque 
+Ato I, 
+Semana 
+3 
+O primeiro ato de vilania 
+real de Malfeitor 
+Voce comanda. 
+Aldeaos fogem. A 
+escolha parece certa. 
+Confronta: 
+havia prazer? 
+Havia 
+justificativa? 
+
+=== PAGE 14 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 14 / 30 
+Sonho 
+Ato 
+O Que Mostra 
+Mecanica Unica 
+Impacto 
+Narrativo 
+A Seca de 847 
+Ato II, 
+Semana 
+2 
+O experimento que 
+causou a seca de 
+Crestfall 
+Voce ve o erro 
+acontecer. Nao sabe 
+que Crestfall foi 
+afetada. 
+Antes da 
+revelacao 
+ingame. 
+Jogador sabe 
+antes de 
+Malfeitor saber. 
+O Rosto de 
+Edenvale 
+Ato II, 
+Semana 
+5 
+O saque que matou o 
+pai de Lyra 
+Voce ve o capitao 
+Edric morrer. Ele 
+chama o nome de 
+Lyra. 
+O mais pesado. 
+Joga antes de 
+uma cena 
+critica com 
+Lyra. 
+A Batalha Final 
+Ato III, 
+Semana 
+1 
+A derrota pelo Heroi, os 
+escombros, Aldric 
+chegando 
+Semi-jogavel: voce 
+pode tentar lutar. Nao 
+adianta. 
+Fecha o arco 
+do passado. 
+Prepara o 
+julgamento 
+final. 
+ 
+ 
+
+=== PAGE 15 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 15 / 30 
+5. Design Sonoro ÔÇö Especificacao Completa 
+­ƒÄÁ  5.1 Filosofia Sonora 
+O som de Malfeitor e chiptune, mas nao 8-bit de videogame generrico. A referencia e o chiptune 
+cinematico de compositors como Disasterpeace (Fez, It Follows) e Lena Raine (Celeste, Minecraft). 
+Cada estado emocional tem textura sonora distinta. 
+ 
+Estado do Jogo 
+Instrumento 
+Dominante 
+Tempo 
+(BPM) 
+Textura 
+Referencia 
+Musical 
+Aldeia - Dia Comum 
+Flauta chip + baixo 
+suave 
+72 BPM 
+Acolhedora com 
+dissonancia leve 
+Stardew Valley, 
+mas com tensao 
+baixa 
+Aldeia - Noite 
+Piano chip + pad de 
+cordas 
+58 BPM 
+Melancolica, 
+espacosa 
+Celeste - 
+Confronting 
+Myself 
+Dialogo de Alta Tensao 
+Percussao 
+minimalista 
+Variavel 
+Apenas ritmo, 
+sem melodia 
+Disco Elysium - 
+The Whirring Void 
+Flashbacks 
+Inversao da trilha 
+atual 
+Nenhum 
+Distorcida, como 
+memoria 
+quebrada 
+Originalmente Fez 
+- Sync 
+Sonhos 
+Arpejo descendente 
++ reverb longo 
+Flutuante 
+Densa e 
+sufocante 
+Undertale - 
+Waterfall, mais 
+lenta 
+Crise/Evento Dramatico 
+Strings chip + bombo 
+95 BPM 
+Urgente mas 
+nao epica 
+Hyper Light Drifter 
+- Drifter 
+Reden├º├úo (cenas finais) 
+Todos os 
+instrumentos + voz 
+chip 
+64 BPM 
+Calorosa, 
+resolvida 
+Celeste - Reach 
+for the Summit 
+Final Recaida 
+Melodia principal 
+invertida e distorcida 
+80 BPM 
+Familiar mas 
+errada 
+Undertale - Your 
+Best Nightmare 
+ 
+­ƒöè  5.2 Design de Efeitos Sonoros 
+Cada NPC tem assinatura sonora. Quando um NPC aparece na tela, um breve motivo de 2-3 notas 
+soa sutilmente. Jogadores que prestam atencao aprendem a identificar NPCs pelo som antes de v├¬-
+los. 
+NPC 
+Motivo 
+Instrumento 
+Tonalidade 
+Malfeitor 
+3 notas descendentes, 
+pausadas 
+Piano chip com reverb 
+Menor natural 
+
+=== PAGE 16 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 16 / 30 
+NPC 
+Motivo 
+Instrumento 
+Tonalidade 
+Lyra 
+2 notas agudas, agressivas 
+Buzzer chip, sem 
+suavizacao 
+Diminuta (dissonante) 
+Aldric 
+4 notas ascendentes, 
+calmas 
+Orgao chip 
+Maior com 7a 
+Gareth 
+Nota grave unica, plana 
+Baixo chip 
+Tritono (ambigua) 
+Serena 
+3 notas rapidas, metalicas 
+Arpejo chip 
+Menor melodica 
+Berthilda 
+Silencio. Nenhum motivo. 
+ÔÇö 
+ÔÇö 
+Stenn 
+5 notas descendentes, lisas 
+Vibrato chip 
+Maior (falsa positividade) 
+ 
+ 
+
+=== PAGE 17 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 17 / 30 
+6. Design Visual 8-bit ÔÇö Especificacao Artistica 
+Expandida 
+­ƒÄ¿  6.1 Spritesheet de Malfeitor ÔÇö Especificacao Completa 
+O sprite de Malfeitor deve ser o mais expressivo do jogo. Ele usa uma capa escura com detalhes 
+purpura que vai se degradando conforme o jogo avanca. A progressao do sprite e visual e narrativa 
+ao mesmo tempo. 
+Semana In-Game 
+Estado Visual da Capa 
+Detalhe Extra 
+Simbolismo 
+Semana 1-2 
+Escura, integra, bordas 
+visiveis 
+Simbolos de poder 
+ainda leg├¡veis 
+Ainda o Lorde, por 
+fora 
+Semana 3-4 
+Uma rasgadura no ombro 
+esquerdo 
+Poeira persistente 
+Vulnerabilidade 
+comecando 
+Semana 5-7 
+Bordas desbotadas, 
+remendos visiveis 
+Bolsos com 
+ferramentas de oficio 
+Esta trabalhando, 
+adaptando 
+Semana 8-10 
+Metade da capa substituida 
+por tecido comum 
+Mistura de paletas: 
+passado e presente 
+Identidade em 
+transicao 
+Ato III - Reden├º├úo 
+Capa fora. Roupa de aldeao 
+comum. 
+Expressao mais aberta, 
+menos defensiva 
+Chegou. Ou quase. 
+Ato III - Recaida 
+Capa restaurada, limpa e 
+escura 
+Olhos com brilho roxo 
+de magia 
+De volta. 
+Completamente. 
+ 
+Ô£Å´©Å  6.2 Animacoes Essenciais ÔÇö Lista Tecnica 
+Malfeitor (24 animacoes 
+minimas): 
+ÔÇó 
+Caminhar (4 direcoes, 
+8 frames) 
+ÔÇó 
+Correr (4 direcoes, 8 
+frames) 
+ÔÇó 
+Parado (idle, 4 frames, 
+respiracao) 
+ÔÇó 
+Cavar/Plantar (4 
+frames) 
+ÔÇó 
+Usar ferramenta (6 
+frames) 
+ÔÇó 
+Dormir (4 frames) 
+ÔÇó 
+Magia involuntaria (6 
+frames) 
+NPCs (12 por NPC 
+principal): 
+ÔÇó 
+Caminhar (2 direcoes, 
+6 frames) 
+ÔÇó 
+Parado (idle, 4 
+frames) 
+ÔÇó 
+Trabalhando (6 frames 
+especifico) 
+ÔÇó 
+Positivo: 3 niveis de 
+intensidade 
+ÔÇó 
+Negativo: 3 niveis 
+(desconfian├ºa, raiva, 
+fuga) 
+ÔÇó 
+Surpreso (4 frames) 
+Ambiente (animacoes de 
+cenario): 
+ÔÇó 
+Fogo de fogueira (8 frames, 
+loop) 
+ÔÇó 
+Agua do rio (6 frames, 
+loop) 
+ÔÇó 
+Folhas no vento (4 frames) 
+ÔÇó 
+Chuva (tiles de particula) 
+ÔÇó 
+Lanternas oscilando (4 
+frames) 
+ÔÇó 
+Fumaca de forja (6 frames) 
+ÔÇó 
+Mercado: bandeirinhas (4 
+frames) 
+ÔÇó 
+Sombra de nuvem 
+passando 
+
+=== PAGE 18 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 18 / 30 
+ÔÇó 
+Magia consciente (10 
+frames, impacto 
+visual) 
+ÔÇó 
+Receber golpe (4 
+frames) 
+ÔÇó 
+Emocao: surpresa (6 
+frames) 
+ÔÇó 
+Emocao: culpa (8 
+frames, lenta) 
+ÔÇó 
+Emocao: sarcasmo (4 
+frames) 
+ÔÇó 
+Chorando (Lyra: 8 
+frames) 
+ÔÇó 
+Rindo (Gareth: 6 
+frames) 
+ÔÇó 
+Meditando (Aldric: 4 
+frames) 
+ÔÇó 
+Gesto de recusa 
+(Berthilda: 3 frames) 
+ÔÇó 
+Acenar (NPCs 
+positivos avancados) 
+ÔÇó 
+Estrelas piscando (noite, 3 
+frames) 
+ÔÇó 
+Transicao dia/noite 
+(gradiente de 10s) 
+ÔÇó 
+Magia de Malfeitor: 
+particulas (12 frames) 
+ 
+­ƒûÑ´©Å  6.3 Especificacao de Interface ÔÇö Cada Tela 
+Tela/UI 
+Layout 
+Estilo Visual 
+Animacoes 
+Caixa de Dialogo 
+Bottom-screen, 3 linhas 
+de texto, retrato NPC 
+esquerda 
+Bordas diferentes por 
+NPC, papel pergaminho 
+Texto aparece letra por 
+letra, retrato pisca ao 
+falar 
+Inventario 
+Bolso desenhado a 
+mao, 12 slots visuais 
+Ilustracao de bolsa real, 
+itens desenhados 
+Balan├ºar ao abrir, itens 
+caem no lugar 
+Mapa da Aldeia 
+Pergaminho 
+desenhado, locais 
+como icones 16x16 
+Linhas de tinta, manchas 
+de cor por area 
+Pin aparece ao descobrir 
+local novo 
+Tela de Status do 
+Oficio 
+Nenhuma: apenas 
+objetos criados como 
+historico 
+Visual de bancada com 
+itens feitos 
+Item criado flutua e vai 
+para inventario 
+Menu de Pausa 
+Simples, lista, 
+minimalist 
+Fundo escurecido, 
+caligrafia pixel 
+Fade in rapido, sem 
+animacao exagerada 
+Tela de Titulo 
+Placa de madeira 
+entalhada, tocha 
+animada 
+Pixel art elaborado, cena 
+de Crestfall ao fundo 
+Vento move arvores, 
+fumaca da taverna 
+Notificacoes 
+Sino no canto superior, 
+toque de sino 
+16x16 sino com 
+animacao de toque 
+Desaparece em 4 
+segundos, nao bloqueia 
+jogo 
+Game Over 
+(expulsao) 
+Tela com Malfeitor 
+saindo pela estrada 
+Silhueta na noite, aldeias 
+atras 
+Longa, sem pressa, 
+dolorosa de ver 
+ 
+ 
+
+=== PAGE 19 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 19 / 30 
+7. Stack Completa de IA para Desenvolvimento 
+OBJETIVO DESTA SECAO 
+Esta secao documenta as melhores ferramentas de IA disponiveis em 2025-2026 para cada 
+disciplina do desenvolvimento de Malfeitor. O objetivo e permitir que 1 desenvolvedor com IA 
+alcance a qualidade de um time de 5-8 pessoas. 
+ 
+ÔÜÖ´©Å  7.1 Motor de Jogo ÔÇö Decisao Definitiva 
+Motor 
+Versao 
+Pro para Malfeitor 
+Contra 
+Veredicto 
+Godot 4.3 
+LTS 
+2025 
+Open source, GDScript 
+simples, 2D nativo, exporta 
+para tudo, comunidade 
+ativa, IA integra bem 
+Menos recursos de AI 
+coding que Unity, docs 
+em expansao 
+RECOMENDADO 
+#1 
+Unity 6 
+LTS 
+2025 
+Maior ecossistema, mais 
+tutoriais de IA, Muse AI 
+integrado, mais assets 2D 
+disponiveis 
+Licenca paga para 
+receita >$200k, mais 
+pesado para 2D 
+simples 
+RECOMENDADO 
+#2 
+GDevelop 5 
+2025 
+100% visual, exporta para 
+web facilmente, gratis 
+Limitacoes para 
+sistemas complexos 
+como MASCARA 
+MVP rapido 
+apenas 
+RPG Maker 
+MZ 
+2025 
+Feito para RPG, dialogos 
+nativos 
+Visual limitado, dificil 
+personalizar pixel art 
+elaborado 
+NAO 
+RECOMENDADO 
+Custom 
+(Phaser.js) 
+3.x 
+Total controle, roda no 
+browser 
+Tempo de 
+desenvolvimento 3x 
+maior, reinventar a 
+roda 
+SO SE WEB-
+FIRST 
+ 
+­ƒÆ╗  7.2 IA para Programacao ÔÇö A Espinha Dorsal 
+Ferramenta 
+Tipo 
+Uso no Projeto 
+Custo 
+Qualidade 2025 
+Cursor IDE 
+Editor com IA 
+PRINCIPAL: escrever todo o 
+GDScript/C#, refatorar, 
+debugar, gerar sistemas 
+inteiros por descricao 
+USD 
+20/mes 
+ÔÿàÔÿàÔÿàÔÿàÔÿà Melhor 
+do mercado 
+Claude Sonnet 
+(Anthropic) 
+LLM via API 
+Gerar logica complexa do 
+MASCARA, sistemas de 
+flags, arquitetura do banco de 
+dados de NPCs 
+USD 
+15/mes (uso 
+moderado) 
+ÔÿàÔÿàÔÿàÔÿàÔÿà 
+Raciocinio 
+superior 
+
+=== PAGE 20 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 20 / 30 
+Ferramenta 
+Tipo 
+Uso no Projeto 
+Custo 
+Qualidade 2025 
+GPT-4o (OpenAI) 
+LLM via 
+ChatGPT 
+Segundo par de olhos, validar 
+arquitetura, gerar variacoes 
+de dialogo em volume 
+USD 
+20/mes 
+ÔÿàÔÿàÔÿàÔÿà 
+Complemento 
+otimo 
+GitHub Copilot 
+Autocomplete 
+Completar codigo linha a 
+linha enquanto escreve 
+USD 
+10/mes 
+ÔÿàÔÿàÔÿàÔÿà Util no 
+dia a dia 
+Gemini 2.0 Pro 
+LLM 
+Analise de codigo longo, 
+revisao de logica narrativa 
+complexa 
+Gratis com 
+limites 
+ÔÿàÔÿàÔÿà Bom para 
+contexto longo 
+v0 by Vercel 
+UI/Frontend 
+Se criar uma ferramenta web 
+de apoio (editor de dialogo, 
+visualizador de flags) 
+Gratis com 
+limites 
+ÔÿàÔÿàÔÿàÔÿà Rapido 
+para interfaces 
+Replit Agent 
+Coding agent 
+Prototipagem rapida de 
+sistemas isolados para testar 
+antes de integrar ao Godot 
+USD 
+25/mes 
+ÔÿàÔÿàÔÿà Bom para 
+testes 
+ 
+­ƒÄ¿  7.3 IA para Arte Pixel Art ÔÇö O Desafio Central 
+Esta e a area mais desafiadora para IA em 2025. Pixel art tem regras muito especificas (paleta 
+limitada, anti-aliasing manual, consistencia de estilo) que a maioria das IAs de imagem ignora. O 
+workflow correto usa IA como RASCUNHO, nao como produto final. 
+ 
+WORKFLOW IA + HUMANO PARA PIXEL ART 
+WORKFLOW RECOMENDADO PARA SPRITES: 
+1. Descrever o sprite para IA gerativa (conceito e emocao, nao pixel por pixel) 
+2. Gerar multiplas variacoes de conceito em resolucao normal 
+3. Redimensionar para a resolucao alvo (ex: 24x32px) com nearest neighbor 
+4. Corrigir manualmente no Aseprite: paleta, contornos, detalhes 
+5. Criar animacoes frame a frame no Aseprite usando o sprite corrigido como base 
+RESULTADO: 60-70% do trabalho de arte inicial feito pela IA, 30-40% de refinamento humano 
+ 
+Ferramenta 
+Tipo 
+Uso Especifico no 
+Projeto 
+Custo 
+Limitacoes para 
+Pixel Art 
+Midjourney v7 
+Geracao de 
+imagem 
+Concept art de 
+personagens, cenarios de 
+referencia, mood boards 
+USD 10-
+60/mes 
+Nao faz pixel art 
+nativo. Usa como 
+conceito. 
+Adobe Firefly 3 
+Geracao de 
+imagem 
+Alternativa ao MJ, melhor 
+para cenarios 
+arquitetonicos de Crestfall 
+Incluido no CC 
+Mesma limitacao 
+de pixel art 
+
+=== PAGE 21 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 21 / 30 
+Ferramenta 
+Tipo 
+Uso Especifico no 
+Projeto 
+Custo 
+Limitacoes para 
+Pixel Art 
+Leonardo.ai 
+Geracao de 
+imagem 
+Tem modelos 
+especializados em game 
+assets e pixel art 
+USD 10-
+24/mes 
+ÔÿàÔÿàÔÿàÔÿà Melhor IA 
+para pixel art 
+direto 
+Stable Diffusion 
+(local) 
+Geracao 
+local 
+Usar modelos pixel art 
+finetuned (PixelArt XL, 
+etc), sem custo 
+recorrente 
+Setup inicial 
+(GPU 
+necessaria) 
+ÔÿàÔÿàÔÿàÔÿà Melhor 
+custo-beneficio 
+longo prazo 
+DALL-E 3 (via 
+ChatGPT) 
+Geracao de 
+imagem 
+Ideacao rapida, sem 
+qualidade de producao 
+Incluido no 
+ChatGPT Plus 
+Pixel art ruim, 
+mas rapido para 
+conceitos 
+Aseprite (com scripts 
+IA) 
+Editor pixel 
+art 
+Ferramenta de edicao 
+ESSENCIAL. Nao gera, 
+mas edita e anima sprites 
+USD 19.99 
+unico 
+ÔÿàÔÿàÔÿàÔÿàÔÿà 
+Insubstituivel 
+para animacao 
+Pixquare / PixelLab 
+Apps mobile 
+de pixel art 
+Iterar rapidamente em 
+sprites pelo celular 
+USD 4-8/mes 
+Complementar ao 
+Aseprite 
+Upscayl (open 
+source) 
+Upscaling 
+Aumentar resolucao de 
+referencias sem perder 
+qualidade 
+Gratis 
+Util para 
+referencias 
+externas 
+ 
+­ƒÄÁ  7.4 IA para Audio e Musica Chiptune 
+Ferramenta 
+Tipo 
+Uso no Projeto 
+Custo 
+Qualidade 
+Suno AI v4 
+Geracao 
+musical 
+Gerar trilhas chiptune/8-bit 
+por descricao textual de 
+emocao e cena 
+USD 10-
+30/mes 
+ÔÿàÔÿàÔÿàÔÿàÔÿà 
+Revolucionario 
+para 2025 
+Udio 
+Geracao 
+musical 
+Alternativa ao Suno, melhor 
+para estilos mais 
+especificos de chiptune 
+USD 
+10/mes 
+ÔÿàÔÿàÔÿàÔÿà 
+Excelente 
+complemento 
+AIVA 
+Composicao 
+IA 
+Criar variacoes de um tema 
+principal com diferentes 
+instrumentacoes 
+USD 11-
+33/mes 
+ÔÿàÔÿàÔÿàÔÿà Mais 
+controlavel 
+FamiTracker 
+(manual) 
+Tracker 
+NES 
+Criar musica chiptune 
+autentica de NES 
+manualmente se quiser 
+autenticidade maxima 
+Gratis 
+ÔÿàÔÿàÔÿàÔÿàÔÿà 
+Autentico mas 
+curva de 
+aprendizado alta 
+LMMS 
+DAW gratis 
+Editar e ajustar musicas 
+geradas por IA, mixar, 
+adicionar SFX 
+Gratis 
+ÔÿàÔÿàÔÿàÔÿà Essencial 
+para ajustes 
+
+=== PAGE 22 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 22 / 30 
+Ferramenta 
+Tipo 
+Uso no Projeto 
+Custo 
+Qualidade 
+ElevenLabs 
+Voz 
+sintetica 
+Se adicionar narrador 
+opcional (voz do diario de 
+Malfeitor) 
+USD 5-
+22/mes 
+ÔÿàÔÿàÔÿàÔÿàÔÿà Melhor 
+voz IA do 
+mercado 
+Freesound.org + IA 
+de editar 
+SFX 
+Base de sons para editar 
+com IA (Adobe Podcast, 
+etc) 
+Gratis + 
+USD 5/mes 
+ÔÿàÔÿàÔÿà Para SFX 
+ambientais 
+Sfxr / Bfxr 
+Geracao de 
+SFX chip 
+Gerar efeitos sonoros 8-bit: 
+passos, itens, UI, magia 
+Gratis 
+ÔÿàÔÿàÔÿàÔÿàÔÿà Padrao 
+da industria 
+indie 
+ 
+­ƒôØ  7.5 IA para Narrativa e Dialogo 
+O volume de texto de Malfeitor (80k-120k palavras) seria impossivel para um dev solo sem IA. O 
+workflow correto usa IA para gerar varia├º├Áes, manter consist├¬ncia de tom e testar coer├¬ncia 
+narrativa. 
+Ferramenta 
+Tipo 
+Uso Especifico 
+Custo 
+Observacao Critica 
+Claude Opus 
+LLM 
+(Anthropic) 
+Gerar todos os dialogos 
+mantendo consistencia de 
+voz de cada NPC; revisar 
+coerencia narrativa entre 
+flags 
+USD 15-
+60/mes 
+Melhor para 
+manutencao de 
+voz e coerencia de 
+longo prazo 
+ChatGPT GPT-4o 
+LLM 
+(OpenAI) 
+Gerar volume de dialogos 
+secundarios, NPCs 
+anonimos, descricoes de 
+locais 
+USD 
+20/mes 
+Bom para volume, 
+menos consistente 
+em voz 
+Notion AI 
+Notas + IA 
+Manter o GDD atualizado, 
+gerar resumos de decisoes, 
+rastrear flags criadas 
+USD 8/mes 
+Essencial para 
+organizacao do 
+projeto 
+Twine + ChatGPT 
+Narrativa 
+interativa 
+Prototipagem das arvores 
+de dialogo antes de 
+codificar no Godot 
+Gratis + 
+USD 
+20/mes 
+Twine e gratis; 
+validar fluxos antes 
+de implementar 
+Rytr / Jasper 
+Copywriting 
+IA 
+Textos de marketing, 
+descricao da Steam page, 
+patch notes 
+USD 9-
+49/mes 
+Nao usar para 
+dialogo do jogo 
+Google 
+NotebookLM 
+RAG sobre 
+docs 
+Fazer perguntas sobre o 
+GDD: 'Esse dialogo 
+contradiz o que Lyra disse 
+na semana 3?' 
+Gratis 
+ÔÿàÔÿàÔÿàÔÿàÔÿà 
+Subestimado para 
+consistencia 
+narrativa 
+ 
+
+=== PAGE 23 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 23 / 30 
+­ƒöì  7.6 IA para Testes e QA 
+Ferramenta 
+Uso 
+Custo 
+Beneficio 
+Claude + Godot scripts 
+Gerar casos de teste automatizados 
+para cada flag narrativa 
+USD 
+15/mes 
+Testa combinacoes de 
+estados que seriam 
+impossiveis 
+manualmente 
+PlaytestCloud 
+Playtesters reais assistidos por IA 
+para analise de sessao 
+USD 50-
+200/teste 
+Feedback qualitativo 
+de jogadores reais 
+com analise de 
+heatmap 
+GameAnalytics (gratis) 
+Analytics de comportamento em 
+sessoes de playtest 
+Gratis 
+Ver onde jogadores 
+abandonam, quais 
+cenas travam 
+ChatGPT como 
+playtester 
+Simular respostas de jogadores a 
+cenas criticas 
+USD 
+20/mes 
+Validar se cenas tem o 
+impacto emocional 
+pretendido 
+Sentry 
+Monitoramento de erros em 
+producao 
+USD 
+26/mes 
+Alertas em tempo real 
+de bugs em saves dos 
+jogadores 
+ 
+­ƒôó  7.7 IA para Marketing e Distribuicao 
+Ferramenta 
+Tipo 
+Uso 
+Custo 
+CapCut + IA 
+Video 
+Criar videos de devlog com edicao 
+automatica, legendas, cortes 
+Gratis / USD 8/mes 
+Canva Magic 
+Design 
+Criar press kit, banners de Steam, 
+thumbnails de YouTube 
+Gratis / USD 15/mes 
+Hootsuite / Buffer 
+Social Media 
+Agendar posts de devlog com IA 
+para sugerir melhores horarios 
+USD 18/mes 
+Typeform + IA 
+Pesquisa 
+Criar surveys de feedback para 
+playtesters com analise automatica 
+USD 25/mes 
+Keymailer 
+Press/Influencer 
+Distribuir keys para criadores de 
+conteudo de jogos indie 
+automaticamente 
+USD 30/mes 
+SteamSpy analise 
+Business Intel 
+Pesquisar dados de jogos similares 
+para definir preco e estrategia 
+Gratis 
+ 
+ÔÜí  7.8 Stack Resumida ÔÇö O Minimo Viavel para 1 Dev Solo 
+
+=== PAGE 24 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 24 / 30 
+STACK RECOMENDADA PARA SOLO DEV 
+Se voce tem USD 100-150/mes para ferramentas de IA, esta e a combinacao que maximiza 
+resultado: 
+ 
+TIER 1 - ESSENCIAL (USD 70/mes): 
+  > Cursor IDE: USD 20/mes ÔÇö para todo o codigo GDScript 
+  > Claude Pro: USD 20/mes ÔÇö narrativa, arquitetura, dialogo 
+  > Suno AI: USD 10/mes ÔÇö toda a trilha sonora 
+  > Leonardo.ai: USD 10/mes ÔÇö concept art e sprites iniciais 
+  > Aseprite: USD 19.99 unico ÔÇö editor de pixel art 
+ 
+TIER 2 - ACELERADOR (USD 50/mes adicionais): 
+  > ChatGPT Plus: USD 20/mes ÔÇö volume de dialogo secundario 
+  > GitHub Copilot: USD 10/mes ÔÇö autocomplete no codigo 
+  > ElevenLabs Starter: USD 5/mes ÔÇö narrador opcional 
+  > Midjourney Basic: USD 10/mes ÔÇö mood boards e referencias 
+  > GameAnalytics: GRATIS ÔÇö analytics de playtest 
+ 
+TIER 3 - OPCIONAL (se ja gerando receita): 
+  > PlaytestCloud, Sentry, Keymailer para fase de lancamento 
+ 
+­ƒôï  7.9 Workflow Semanal com IA ÔÇö Rotina do Dev 
+Dia 
+Foco 
+Ferramentas IA Usadas 
+Entregavel 
+Segunda 
+Planejamento e 
+arquitetura 
+Claude (design), Notion AI 
+(docs) 
+Decisoes de design da 
+semana documentadas 
+Terca 
+Desenvolvimento de 
+sistemas (codigo) 
+Cursor + Claude + GitHub 
+Copilot 
+1-2 sistemas codificados 
+e testados 
+Quarta 
+Arte e assets 
+Leonardo.ai + Aseprite + Suno 
+AI 
+3-5 sprites ou 1 trilha 
+musical 
+Quinta 
+Narrativa e dialogo 
+Claude Opus + Google 
+NotebookLM 
+100-300 linhas de 
+dialogo geradas e 
+revisadas 
+Sexta 
+Integracao e testes 
+Cursor + Claude (casos de 
+teste) 
+Build do dia jogavel sem 
+regressoes 
+Sabado 
+Polimento e devlog 
+CapCut IA + Canva Magic 
+Post de progresso 
+semanal nas redes 
+Domingo 
+Revisao e planejamento 
+Claude (revisao critica) + Notion 
+GDD atualizado, lista da 
+proxima semana 
+ 
+ 
+
+=== PAGE 25 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 25 / 30 
+8. Arquitetura Tecnica ÔÇö Godot 4 + IA 
+­ƒôü  8.1 Estrutura de Pastas do Projeto 
+ESTRUTURA DE PASTAS GODOT 4 
+res:// 
+  /actors          ÔÇö Scenes e scripts de personagens (player, NPCs) 
+  /actors/player   ÔÇö Malfeitor: sprite, controller, states 
+  /actors/npcs     ÔÇö Um folder por NPC com scenes, dialogos, AI states 
+  /systems         ÔÇö Sistemas core do jogo 
+  /systems/mascara ÔÇö Sistema de dialogo MASCARA 
+  /systems/trust   ÔÇö Sistema de confianca de NPCs 
+  /systems/rumors  ÔÇö Sistema de rumores 
+  /systems/time    ÔÇö Ciclo dia/noite e calendario 
+  /systems/craft   ÔÇö Sistema de oficios 
+  /systems/events  ÔÇö Eventos dinamicos da aldeia 
+  /systems/dreams  ÔÇö Sequencias de sonho/flashback 
+  /world           ÔÇö Mapas e cenarios de Crestfall 
+  /ui              ÔÇö Todos os elementos de interface 
+  /assets/sprites  ÔÇö Spritesheet de personagens e tiles 
+  /assets/audio    ÔÇö Trilhas e SFX organizados por contexto 
+  /data            ÔÇö Arquivos JSON: dialogos, eventos, NPC profiles 
+  /saves           ÔÇö Sistema de save com historico de 5 slots 
+  /tests           ÔÇö Scripts de teste automatizado de flags 
+ 
+­ƒÜ®  8.2 Arquitetura do Sistema de Flags Narrativas 
+O sistema de flags e a espinha dorsal tecnica do jogo. Toda decisao, toda descoberta, toda relacao 
+e armazenada como flag. O sistema deve ser robusto, auditavel e resistente a estados 
+contraditorios. 
+ 
+SISTEMA DE FLAGS ÔÇö NOMENCLATURA 
+CATEGORIAS DE FLAGS: 
+ 
+FLAG_WORLD_*     ÔÇö Estado do mundo (FLAG_WORLD_DROUGHT_REVEALED, 
+FLAG_WORLD_STENN_DEBT) 
+FLAG_NPC_*_*     ÔÇö Estado por NPC (FLAG_NPC_LYRA_READING_STARTED, 
+FLAG_NPC_ALDRIC_SECRET_1) 
+FLAG_TRUST_*_*   ÔÇö Dimensoes de confianca (FLAG_TRUST_LYRA_LOYALTY = 3) 
+FLAG_PLAYER_*    ÔÇö Estado de Malfeitor (FLAG_PLAYER_MAGIC_LEVEL, 
+FLAG_PLAYER_CAPE_STATE) 
+FLAG_CRAFT_*     ÔÇö Progresso de oficios (FLAG_CRAFT_HERB_LEVEL = 2) 
+
+=== PAGE 26 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 26 / 30 
+FLAG_RUMOR_*     ÔÇö Rumores ativos e status (FLAG_RUMOR_MAGE_ACTIVE, 
+FLAG_RUMOR_MAGE_DISTORTED) 
+FLAG_MEMORY_*    ÔÇö Sonhos e flashbacks vistos (FLAG_MEMORY_TRIBUNAL_SEEN) 
+FLAG_ENDING_*    ÔÇö Pre-condicoes de final (calculadas a cada decisao importante) 
+ 
+REGRA DE OURO: Toda flag tem um log com timestamp ingame e o evento que a criou. 
+Isso permite o sistema de NotebookLM auditar contradicoes e o save ter historico completo. 
+ 
+­ƒñû  8.3 Integracao de IA no Pipeline de Desenvolvimento 
+Tarefa de Dev 
+Prompt para IA (exemplo) 
+Ferramenta 
+Output Esperado 
+Criar sistema de 
+rumores 
+'Crie um sistema Godot 4 GDScript 
+onde rumores tem TTL, se 
+distorcem ao passar por NPCs 
+com variavel de gossip_tendency, 
+e decaem com tempo. Usar sinais 
+para notificar NPCs.' 
+Cursor + 
+Claude 
+Script RumorSystem.gd 
+completo e funcional 
+Gerar dialogos de 
+Lyra 
+'Escreva 20 linhas de dialogo de 
+Lyra (13 anos, raivosa, inteligente) 
+para o Dia 1-7 com Malfeitor. 
+Aspecto do dialogo: hostilidade 
+ativa. Tom: dor real, nao 
+vitimismo.' 
+Claude 
+Opus 
+JSON com linhas, 
+aspectos, condicoes e 
+branches 
+Criar sprite de 
+Malfeitor 
+'Pixel art character, 24x32px, dark 
+mage in tattered purple cloak, 
+week 3 of redemption, one visible 
+mend on shoulder, pixel art style 
+similar to Hyper Light Drifter, side-
+view, 4-directional walk cycle 
+reference' 
+Leonardo.ai 
+Imagem de referencia para 
+refinar no Aseprite 
+Compor trilha da 
+taverna 
+'Chiptune tavern music, warm but 
+with underlying melancholy, 72 
+BPM, NES-style, loop seamlessly, 
+2 minutes, reference: Stardew 
+Valley but darker' 
+Suno AI 
+MP3 de trilha para ajustar 
+no LMMS 
+Balancear economia 
+'Dado este sistema de economia 
+[descrever], simule 28 dias de 
+gameplay com comportamento 
+medio de jogador. Onde o jogador 
+vai ficar sem dinheiro? Quando a 
+tensao economica cede?' 
+Claude + 
+Python sim 
+Relatorio de 
+balanceamento com 
+ajustes sugeridos 
+ 
+ 
+
+=== PAGE 27 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 27 / 30 
+9. Os 5 Finais ÔÇö Especificacao Completa 
+Ô£¿  9.1 FINAL 1 ÔÇö A Reden├º├úo Plena 
+REDEN├ç├âO PLENA 
+CONDICOES: Lyra perdoou (arco completo); Berthilda aprovou (duas condicoes); Aldric revelou 
+sua historia completa; Malfeitor NAO usou magia; Stenn foi confrontado publicamente; Heroi 
+chegou e foi encontrado por Malfeitor antes de Stenn. 
+ 
+CENA FINAL: Malfeitor na praca, sem a capa. O Heroi esta la. Pela primeira vez, os dois falam 
+como pessoas, nao como papeis. O Heroi sabe quem Kael era. A aldeia observa. Nao ha discurso. 
+Ha silencio, e entao Berthilda, que nunca falou com Malfeitor, atravessa a praca e lhe entrega pao 
+fresco. 
+ 
+MUSICA: Tema principal com todos os motivos de NPCs em harmonia pela primeira vez. 
+DURACAO DA CENA: 8-12 minutos. Sem pressa. Sem skip recomendado. 
+POS-CREDITOS: Crestfall 6 meses depois. Malfeitor tem nome real na placa da porta. 
+ 
+ÔÜû´©Å  9.2 FINAL 2 ÔÇö O Impasse Tragico 
+IMPASSE TRAGICO 
+CONDICOES: Malfeitor mudou genuinamente. Mas o soldado de Edenvale chegou antes de Stenn 
+ser confrontado. Stenn usou as evidencias. A aldeia esta dividida: metade acredita que Malfeitor 
+mudou, metade nao aceita. 
+ 
+CENA FINAL: Um voto na praca. Metade quer que fique, metade quer que va. Por uma diferen├ºa 
+de dois votos, Malfeitor e expulso. Gareth vota para ficar. Lyra nao vota, apenas olha. Berthilda 
+vota para ir embora. 
+ 
+NOTA DE DESIGN: Este e o final mais honesto. A reden├º├úo real nao garante aceitacao social. O 
+jogo nao pede desculpa por isso. 
+MUSICA: Tema de Malfeitor sozinho, sem os motivos dos NPCs. 
+POS-CREDITOS: Malfeitor na estrada. Uma voz (Lyra) grita seu nome verdadeiro. Ela corre ate 
+ele. Da um objeto: o livro de leitura. Nao diz nada. Volta para a aldeia. 
+ 
+­ƒöÑ  9.3 FINAL 3 ÔÇö A Recaida 
+A RECAIDA 
+CONDICOES: Malfeitor usou magia em pelo menos 3 ocasioes; usou o veneno de Davi; mentiu 
+para Lyra e ela descobriu. 
+
+=== PAGE 28 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 28 / 30 
+ 
+CENA FINAL: Nao ha confronto heroico. Malfeitor simplesmente vai embora. Ninguem chora. 
+Gareth tranqueia a taverna. Davi escreve no diario: 'Experimento concluido. Hipotese nao 
+confirmada.' Lyra olha pela janela ate sumir. 
+ 
+NOTA DE DESIGN: Nao ha musica epica de vilao. E silencio. A ausencia de reacao e o pior 
+castigo. 
+POS-CREDITOS: Malfeitor num castelo em ruinas. Reconstroindo. O ciclo recome├ºa. 
+Provavelmente. 
+ 
+­ƒùØ´©Å  9.4 FINAL 4 ÔÇö O Segredo 
+O SEGREDO 
+CONDICOES: SO DISPONIVEL EM SEGUNDA RUN com New Game+. Malfeitor deve ter 
+descoberto que seu pai viveu em Crestfall (run anterior) E ter preservado a confianca de Aldric ao 
+maximo. 
+ 
+CENA FINAL: Aldric revela que foi ele quem entregou a familia de Kael ao Rei Valdris 20 anos 
+atras. Salvou Malfeitor por culpa, nao por bondade. O jogo congela. Nao ha opcoes de dialogo. 
+Apenas o rosto de Malfeitor. 
+ 
+NOTA DE DESIGN: O jogador nao sabe o que fazer. Nao ha musica. Ha 30 segundos de silencio 
+absoluto antes de fade to black. 
+POS-CREDITOS: Dois resultados aleatorios, sem aviso: (A) Malfeitor perdoa Aldric em silencio e 
+parte. (B) A cadeira de Aldric esta vazia de manha. Ninguem sabe onde ele foi. 
+ 
+­ƒôû  9.5 FINAL 5 ÔÇö A Cronica (Final Bonus) 
+A CRONICA ÔÇö FINAL BONUS 
+CONDICOES: Malfeitor completou o oficio de escrita ao maximo E ajudou Nora na biblioteca em 
+pelo menos 8 ocasioes E encontrou todos os 5 fragmentos de historia de Crestfall. 
+ 
+CENA FINAL: Malfeitor escreve. O que ele escreve e o que o jogador acabou de jogar - a historia 
+de Crestfall, incluindo ele mesmo, nao como vilao nem como heroi, mas como pessoa. O livro e 
+deixado na biblioteca. 
+ 
+NOTA DE DESIGN: E um final sobre narrativa e memoria. Sobre o poder de contar historias. Sobre 
+o que fica depois que as pessoas vao embora. 
+POS-CREDITOS: 50 anos depois. Um estudante l├¬ o livro de Kael Ashmore. Nao sabe quem foi. 
+Acha fascinante. 
+ 
+ 
+
+=== PAGE 29 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 29 / 30 
+10. Roadmap Atualizado com IA 
+­ƒù║´©Å  10.1 Fases de Desenvolvimento 
+Fase 
+Periodo 
+Foco 
+Entregaveis IA-
+Assistidos 
+Milestone 
+0 - Setup 
+Semanas 1-2 
+Configurar Godot, 
+Cursor, todas as IAs; 
+criar estrutura de pastas; 
+definir pipeline 
+Prompt templates para 
+cada tipo de tarefa 
+Dev 
+environment 
+100% funcional 
+com IA 
+1 - Prototipo 
+Narrativo 
+Semanas 3-6 
+Sistema MASCARA 
+basico; 1 NPC (Gareth); 
+3 dialogos por aspecto; 
+calendario simples 
+Claude: 200 linhas de 
+dialogo; Cursor: 
+MASCARA v1 
+Demo jogavel 
+de 15min com 
+1 NPC 
+2 - MVP 
+Aldeia 
+Semanas 7-
+16 
+Crestfall completa; 3 
+NPCs (Lyra, Aldric, 
+Serena); Ato I completo; 
+arte base 
+Leonardo: todos os 
+sprites v1; Suno: 4 trilhas 
+Ato I completo 
+- Demo publica 
+no itch.io 
+3 - 
+Expansao 
+Semanas 17-
+30 
+Todos os 7 NPCs; 
+sistema de rumors; 4 
+oficios; sonhos; Ato II 
+Claude: 800+ linhas 
+dialogo; Suno: 8 trilhas 
+adicionais 
+Beta fechado - 
+50 testadores 
+selecionados 
+4 - 
+Finalizacao 
+Semanas 31-
+42 
+Ato III; 5 finais; polimento 
+de arte; audio final; 
+localizacao EN/PT 
+ElevenLabs: narrador; 
+Suno: trilhas finais; 
+Canva: press kit 
+Build final para 
+revisao Steam 
+5 - 
+Lancamento 
+Semana 43 
+Launch Steam; 
+marketing; press kit; 
+devlog de lancamento 
+CapCut: trailer; Canva: 
+materiais; ChatGPT: 
+press release 
+LANCAMENTO 
+PUBLICO 
+6 - Pos-
+lancamento 
+Mes 12-18 
+DLC Aldric; versao 
+mobile; New Game+; 
+Final O Segredo 
+Stack completa baseada 
+em feedback 
+Expansao da 
+base de 
+jogadores 
+ 
+ 
+ 
+Ôÿá  ÔÜö  Ôÿá 
+MALFEITOR foi projetado para durar. 
+Nao na memoria de quem completou todos os finais. 
+Mas na mente de quem ficou pensando no Impasse Tragico por uma semana. 
+
+=== PAGE 30 ===
+MALFEITOR v2.0 | GDD Expandido + Stack de IA para Desenvolvimento 
+Malfeitor PRD v2.0  |  Pag. 30 / 30 
+ 
+PRD v2.0  |  Versao Expandida com Stack de IA  |  2025-2026 
+ 
+

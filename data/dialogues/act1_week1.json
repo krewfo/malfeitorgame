@@ -1,0 +1,559 @@
+[
+  {
+    "node_id": "D1-01-001",
+    "scene": "tavern_room",
+    "trigger": { "type": "auto", "day_range": [1,1], "conditions": [], "priority": 200 },
+    "speaker": "narracao",
+    "portrait_state": null,
+    "text": "Você acorda. A cama é dura. O teto tem uma mancha de umidade. Você foi derrotado. Você está vivo. Não sabe por qual ordem essas coisas importam.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D1-01-002" } },
+    "music_override": "mus_village_night"
+  },
+  {
+    "node_id": "D1-01-002",
+    "scene": "tavern_room",
+    "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "gareth",
+    "portrait_state": "suspicious",
+    "text": "Sei que você tá acordado. Posso ouvir passos diferentes quando uma pessoa finge dormir.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D1-01-003" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-01-003",
+    "scene": "tavern_room",
+    "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "gareth",
+    "portrait_state": "neutral",
+    "text": "O Frei me convenceu a deixar você ficar. Não me convenceu. Então temos um acordo temporário: quinze moedas por semana. Adiantado. Você tem até Sexta.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D1-01-004" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-01-004",
+    "scene": "tavern_room",
+    "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "gareth",
+    "portrait_state": "neutral",
+    "text": "Café da manhã já foi. Tem pão na cozinha se você trabalhar por ele. O trabalho é varrer. Não é difícil. Não exige talento.",
+    "aspect_options": [
+      {
+        "id": "D1-01-004-A", "aspect": "SINCERIDADE",
+        "text": "Onde fica a vassoura?",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "gareth": { "respeito": 1 } },
+          "flags_set": ["FLAG_NPC_GARETH_FIRST_JOB"],
+          "next_node": "D1-01-005-A"
+        }
+      },
+      {
+        "id": "D1-01-004-B", "aspect": "SARCASMO",
+        "text": "Estou aliviado. Sou excelente em não ter talento.",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "gareth": { "simpatia": -1, "curiosidade": 1 } },
+          "flags_set": ["FLAG_NPC_GARETH_FIRST_JOB"],
+          "next_node": "D1-01-005-B"
+        }
+      },
+      {
+        "id": "D1-01-004-C", "aspect": "VULNERABILIDADE",
+        "text": "Estou com dor. Mas vou varrer.",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "gareth": { "simpatia": 1, "lealdade": 1 } },
+          "flags_set": ["FLAG_NPC_GARETH_FIRST_JOB"],
+          "next_node": "D1-01-005-C"
+        }
+      }
+    ],
+    "no_choice_result": {
+      "aspect": "SILENCIO",
+      "text": "[Malfeitor se levanta em silêncio]",
+      "effects": {
+        "trust_deltas": { "gareth": { "familiaridade": 2, "curiosidade": 1 } },
+        "flags_set": ["FLAG_NPC_GARETH_FIRST_JOB"],
+        "next_node": "D1-01-005-D"
+      }
+    },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-01-005-A",
+    "scene": "tavern_room",
+    "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "gareth",
+    "portrait_state": "neutral",
+    "text": "Atrás da porta. Você começa depois de comer. Não come de graça — a metade do que ganhar hoje vai para o pão. Entendido?",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-01-005-B",
+    "scene": "tavern_room",
+    "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "gareth",
+    "portrait_state": "neutral",
+    "text": "(Uma pausa longa) Atrás da porta. (Sai sem mais explicações)",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-01-005-C",
+    "scene": "tavern_room",
+    "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "gareth",
+    "portrait_state": "neutral",
+    "text": "(Pausa. Tom muda ligeiramente) Tem emplastro embaixo da pia. Vassoura atrás da porta. Não precisa fazer tudo hoje.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-01-005-D",
+    "scene": "tavern_room",
+    "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "gareth",
+    "portrait_state": "neutral",
+    "text": "(Sem virar) Vassoura atrás da porta. Pão na cozinha. (Sai)",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-02-001",
+    "scene": "town_square",
+    "trigger": { "type": "auto", "day_range": [1,1], "conditions": ["FLAG_NPC_GARETH_FIRST_JOB"], "priority": 100 },
+    "speaker": "lyra",
+    "portrait_state": "hostile_shouting",
+    "text": "Olha só quem apareceu. O Destruidor de Aldeias. O Terror do Norte. Que nome grande pra um homem que mal consegue carregar água.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D1-02-002" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-02-002",
+    "scene": "town_square",
+    "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "lyra",
+    "portrait_state": "hostile_shouting",
+    "text": "Minha mãe perdeu a razão por causa do que esse homem fez. Vocês sabem disso? Sabem quem está morando aqui?",
+    "aspect_options": [
+      {
+        "id": "D1-02-002-A", "aspect": "SARCASMO",
+        "text": "Obrigado pelo resumo. Economizou minha apresentação.",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "lyra": { "simpatia": -1, "familiaridade": 1, "medo": -1 } },
+          "flags_set": ["FLAG_NPC_LYRA_FIRST_MEETING"],
+          "next_node": "D1-02-003-A"
+        }
+      },
+      {
+        "id": "D1-02-002-B", "aspect": "CULPA",
+        "text": "Você tem razão em cada palavra.",
+        "visible_when": [], "hidden_when": ["FLAG_NPC_LYRA_CULPA_USED"],
+        "effects": {
+          "trust_deltas": { "lyra": { "simpatia": 1, "curiosidade": 2, "medo": -1 } },
+          "flags_set": ["FLAG_NPC_LYRA_FIRST_MEETING", "FLAG_NPC_LYRA_CULPA_USED"],
+          "next_node": "D1-02-003-B"
+        }
+      },
+      {
+        "id": "D1-02-002-D", "aspect": "AUTORIDADE",
+        "text": "Criança. Você não sabe de nada.",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "lyra": { "lealdade": -3, "medo": 2 } },
+          "flags_set": ["FLAG_NPC_LYRA_FIRST_MEETING", "FLAG_VILLAGE_TRUST_HIT_1", "FLAG_PLAYER_AUTHORITY_USED_THIS_WEEK"],
+          "next_node": "D1-02-003-D"
+        }
+      }
+    ],
+    "no_choice_result": {
+      "aspect": "SILENCIO",
+      "text": "[Malfeitor olha para ela, acena com a cabeça, continua andando]",
+      "effects": {
+        "trust_deltas": { "lyra": { "curiosidade": 2, "familiaridade": 1 } },
+        "flags_set": ["FLAG_NPC_LYRA_FIRST_MEETING"],
+        "next_node": "D1-02-003-C"
+      }
+    },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-02-003-A", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "lyra", "portrait_state": "hostile",
+    "text": "(Mandíbula fechada) Faz graça? Acha que tudo é engraçado?",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "[Malfeitor já foi embora]", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-02-003-B", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "lyra", "portrait_state": "confused",
+    "text": "(Para. Longa pausa.) Então... você admite.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D1-02-003-B-2" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-02-003-B-2", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "lyra", "portrait_state": "quiet",
+    "text": "(Mais baixo) Isso não muda nada.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-02-003-C", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "lyra", "portrait_state": "hostile_shouting",
+    "text": "OLHE PRA MIM QUANDO EU ESTIVER FALANDO!",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D1-02-003-C-2" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-02-003-C-2", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "Ela jogou uma pedra. Errou por meio metro. Os aldeões olham para o chão. Lyra parece menor do que antes. Malfeitor não reagiu.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-02-003-D", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "lyra", "portrait_state": "hostile_shouting",
+    "text": "(Voz quebra de raiva) Criança? CRIANÇA? Eu tinha sete anos quando—",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D1-02-003-D-2" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-02-003-D-2", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "(Cochicho dos aldeões) Viram? Olha como ele fala com ela.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-03-001",
+    "scene": "town_square",
+    "trigger": { "type": "auto", "day_range": [1,1], "conditions": ["FLAG_NPC_LYRA_FIRST_MEETING"], "priority": 90 },
+    "speaker": "aldric",
+    "portrait_state": "calm",
+    "text": "Você parece melhor do que ontem. \"Melhor\" sendo relativo.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D1-03-002" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-03-002", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "aldric", "portrait_state": "calm",
+    "text": "Não precisa agradecer. Não fiz por bondade. Isso ficará claro eventualmente.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D1-03-003" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-03-003", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "aldric", "portrait_state": "calm",
+    "text": "Há uma igreja no fim da rua principal. Não precisa ser religioso. Mas se precisar de um lugar para sentar em silêncio, existe.",
+    "aspect_options": [
+      {
+        "id": "D1-03-003-A", "aspect": "CURIOSIDADE",
+        "text": "Por que você me ajudou?",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "aldric": { "familiaridade": 2, "curiosidade": 1 } },
+          "flags_set": [],
+          "next_node": "D1-03-004-A"
+        }
+      },
+      {
+        "id": "D1-03-003-B", "aspect": "SARCASMO",
+        "text": "Um vilão numa igreja. Vou refletir sobre isso.",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "aldric": { "curiosidade": 1, "simpatia": 1 } },
+          "flags_set": [],
+          "next_node": "D1-03-004-B"
+        }
+      },
+      {
+        "id": "D1-03-003-C", "aspect": "VULNERABILIDADE",
+        "text": "Não sei por que ainda estou vivo.",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "aldric": { "simpatia": 2, "lealdade": 1 } },
+          "flags_set": ["FLAG_NPC_ALDRIC_PERSONAL_HINT_1"],
+          "next_node": "D1-03-004-C"
+        }
+      }
+    ],
+    "no_choice_result": {
+      "aspect": "SILENCIO",
+      "text": "[Malfeitor olha para a igreja ao fundo]",
+      "effects": {
+        "trust_deltas": { "aldric": { "familiaridade": 1 } },
+        "flags_set": [],
+        "next_node": "D1-03-004-D"
+      }
+    },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-03-004-A", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "aldric", "portrait_state": "thoughtful",
+    "text": "A resposta curta: porque posso. A resposta longa: porque algumas dívidas se pagam de formas inesperadas. Não me peça mais do que isso hoje.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_NPC_ALDRIC_INTRO_COMPLETE"], "next_node": "D1-03-005" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-03-004-B", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "aldric", "portrait_state": "amused",
+    "text": "(Sorri levemente) Onde mais você refletiria? Um homem que fez o que você fez tem muito no que pensar.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_NPC_ALDRIC_INTRO_COMPLETE"], "next_node": "D1-03-005" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-03-004-C", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "aldric", "portrait_state": "serious",
+    "text": "(Pausa longa) Eu já não soube por que estava vivo, uma vez. Foi a pior fase da minha vida. E a mais necessária.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_NPC_ALDRIC_INTRO_COMPLETE"], "next_node": "D1-03-005" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-03-004-D", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "aldric", "portrait_state": "calm",
+    "text": "Até logo, então. (Começa a ir, para sem virar) A Berthilda planta no jardim aos Domingos de manhã. Não que isso importe.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_NPC_ALDRIC_INTRO_COMPLETE"], "next_node": "D1-03-005" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D1-03-005", "scene": "town_square", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "Aldric vai embora sem pressa. Você percebe que ele não disse seu nome. Não o nome que você usa. Não o outro.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D3-01-001",
+    "scene": "church",
+    "trigger": { "type": "proximity", "npc": "aldric", "day_range": [3,5], "conditions": ["FLAG_NPC_ALDRIC_INTRO_COMPLETE"], "priority": 80 },
+    "speaker": "aldric", "portrait_state": "thoughtful",
+    "text": "Boa tarde. Você está aqui por razão ou por hábito?",
+    "aspect_options": [
+      { "id": "D3-01-001-A", "aspect": "CURIOSIDADE", "text": "O que acontece aqui?", "visible_when": [], "hidden_when": [], "effects": { "trust_deltas": { "aldric": { "familiaridade":1 } }, "flags_set": [], "next_node": "D3-01-002" } },
+      { "id": "D3-01-001-B", "aspect": "SINCERIDADE", "text": "Nenhum dos dois. Precisava de um lugar quieto.", "visible_when": [], "hidden_when": [], "effects": { "trust_deltas": { "aldric": { "lealdade":1 } }, "flags_set": [], "next_node": "D3-01-002" } }
+    ],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "[Senta num banco ao fundo]", "effects": { "trust_deltas": { "aldric": { "familiaridade":1 } }, "flags_set": [], "next_node": "D3-01-002" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D3-01-002", "scene": "church", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "aldric", "portrait_state": "calm",
+    "text": "Tenho documentos que precisam ser copiados. Letras claras, sem ornamento. Pago oito moedas por sessão de meio dia.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D3-01-003" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D3-01-003", "scene": "church", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "aldric", "portrait_state": "calm",
+    "text": "Não pergunto por que você sabe escrever. Presumo que você não perguntará por que eu preciso de alguém que não seja da aldeia.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_NPC_ALDRIC_DEBT_HINT_1", "FLAG_CRAFT_SWEEPING_ACTIVE"], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D5-01-001",
+    "scene": "herb_garden",
+    "trigger": { "type": "auto", "day_range": [4,7], "conditions": ["FLAG_NPC_GARETH_FIRST_JOB"], "priority": 70 },
+    "speaker": "davi", "portrait_state": "focused",
+    "text": "(Sem olhar, examinando uma planta) Você não é daqui. Postura errada para alguém que carregou lenha a vida toda.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D5-01-002" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D5-01-002", "scene": "herb_garden", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "davi", "portrait_state": "focused",
+    "text": "Davi. Ervas medicinais, venenos não-venenos, e tudo que a biblioteca não deixa ter em exposição aberta.",
+    "aspect_options": [
+      {
+        "id": "D5-01-002-A", "aspect": "CURIOSIDADE",
+        "text": "Venenos não-venenos?",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "davi": { "curiosidade": 2, "respeito": 1 } },
+          "flags_set": [],
+          "next_node": "D5-01-003-A"
+        }
+      },
+      {
+        "id": "D5-01-002-B", "aspect": "SINCERIDADE",
+        "text": "Sim. Não sei por quanto tempo.",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "davi": { "simpatia": 1, "familiaridade": 1 } },
+          "flags_set": [],
+          "next_node": "D5-01-003-B"
+        }
+      },
+      {
+        "id": "D5-01-002-C", "aspect": "SARCASMO",
+        "text": "Fama me precede, ao que parece.",
+        "visible_when": [], "hidden_when": [],
+        "effects": {
+          "trust_deltas": { "davi": { "curiosidade": 1 } },
+          "flags_set": [],
+          "next_node": "D5-01-003-C"
+        }
+      }
+    ],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_NPC_DAVI_INTRO_COMPLETE"], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D5-01-003-A", "scene": "herb_garden", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "davi", "portrait_state": "curious",
+    "text": "Chamo de não-venenos as plantas que matam dependendo da dose. Beladona, dedaleira, acônito. Em quantidade certa, curam. Em quantidade errada...",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D5-01-003-A-2" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D5-01-003-A-2", "scene": "herb_garden", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "davi", "portrait_state": "curious",
+    "text": "Tudo que é poderoso é assim. Não acha?",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_NPC_DAVI_INTRO_COMPLETE"], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D5-01-003-B", "scene": "herb_garden", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "davi", "portrait_state": "neutral",
+    "text": "Honesto. Incomum. (Volta a examinar a planta) Se quiser aprender alguma coisa útil enquanto fica, passe aqui amanhã cedo.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_NPC_DAVI_INTRO_COMPLETE"], "next_node": null } },
+    "music_override": null
+  },
+  {
+    "node_id": "D5-01-003-C", "scene": "herb_garden", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "davi", "portrait_state": "neutral",
+    "text": "A fama de todo mundo precede. Estou interessado no que vem depois.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_NPC_DAVI_INTRO_COMPLETE"], "next_node": null } },
+    "music_override": null
+  },
+
+  {
+    "node_id": "D2-01-WORK",
+    "scene": "tavern",
+    "trigger": { "type": "proximity", "npc": "gareth", "day_range": [2,7], "conditions": ["FLAG_NPC_GARETH_INTRO_COMPLETE"], "repeatable": true, "priority": 5 },
+    "speaker": "gareth", "portrait_state": "neutral",
+    "text": "Vassoura fica aí. Mesa do canto tá com mancha de vinho velho.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "D2-01-002" } },
+    "music_override": null
+  },
+  {
+    "node_id": "D2-01-002", "scene": "tavern", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "gareth", "portrait_state": "neutral",
+    "text": "Não conversa enquanto trabalha. Perturba o ritmo.",
+    "aspect_options": [
+      {
+        "id": "D2-01-002-A",
+        "aspect": "SILENCIO",
+        "text": "(Trabalhar em silêncio.)",
+        "effects": { "trust_deltas": { "gareth": { "familiaridade": 1 } }, "flags_set": [], "earn_gold": 3, "next_node": "D2-01-003-DONE" }
+      },
+      {
+        "id": "D2-01-002-B",
+        "aspect": "SARCASMO",
+        "text": "Ritmo de quê? De poeira?",
+        "effects": { "trust_deltas": {}, "flags_set": [], "earn_gold": 2, "next_node": "D2-01-003-DONE" }
+      },
+      {
+        "id": "D2-01-002-C",
+        "aspect": "VULNERABILIDADE",
+        "text": "Estou com dor. Mas vou varrer.",
+        "effects": { "trust_deltas": { "gareth": { "familiaridade": 1, "simpatia": 1 } }, "flags_set": [], "earn_gold": 2, "next_node": "D2-01-003-DONE" }
+      }
+    ],
+    "no_choice_result": null,
+    "music_override": null
+  },
+  {
+    "node_id": "D2-01-003-DONE", "scene": "tavern", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "Você trabalhou. As mãos doem. Mas há moedas no seu bolso agora.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": ["FLAG_CRAFT_SWEEPING_ACTIVE"], "next_node": null } },
+    "music_override": null
+  },
+
+  {
+    "node_id": "DREAM-01-001",
+    "scene": "dream",
+    "trigger": { "type": "auto", "day_range": [6,7], "conditions": [], "priority": 999 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "Você é Kael. Você tem vinte e dois anos. O tribunal tem pedras frias. Seu pai está do outro lado do recinto.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "DREAM-01-002" } },
+    "music_override": "mus_dream"
+  },
+  {
+    "node_id": "DREAM-01-002", "scene": "dream", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "REI VALDRIS: (Off-screen) Por crimes de traição à Coroa...",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "DREAM-01-003" } },
+    "music_override": null
+  },
+  {
+    "node_id": "DREAM-01-003", "scene": "dream", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "PAI DE KAEL: (Baixo, para Kael) Corre. Pela janela. Corre e não voltes.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "DREAM-01-004" } },
+    "music_override": null
+  },
+  {
+    "node_id": "DREAM-01-004", "scene": "dream", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "Você tenta correr. Seus pés não movem. O sonho é assim — não por crueldade, mas porque a memória guarda o peso, não a velocidade.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "DREAM-01-005" } },
+    "music_override": null
+  },
+  {
+    "node_id": "DREAM-01-005", "scene": "dream", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "Um homem de uniforme da Corte está de costas para você. Você tem a sensação de conhecê-lo. Não consegue ver o rosto.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": {}, "flags_set": [], "next_node": "DREAM-01-006" } },
+    "music_override": null
+  },
+  {
+    "node_id": "DREAM-01-006", "scene": "dream", "trigger": { "type": "manual", "priority": 0 },
+    "speaker": "narracao", "portrait_state": null,
+    "text": "Você acorda. O quarto é o mesmo. A cama é dura. Você tem cinquenta e dois anos agora. Não adiantou nada.",
+    "aspect_options": [],
+    "no_choice_result": { "aspect": "SILENCIO", "text": "", "effects": { "trust_deltas": { "aldric": { "curiosidade": 1 } }, "flags_set": ["FLAG_MEMORY_TRIBUNAL_SEEN"], "next_node": null } },
+    "music_override": null
+  }
+]

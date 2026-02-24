@@ -1,0 +1,11 @@
+{
+  "npc_id": "nora", "display_name": "Nora", "age": 71,
+  "trust": { "familiaridade":0, "lealdade":0, "respeito":0, "simpatia":0, "medo":0, "curiosidade":1 },
+  "arc_state": "neutral", "last_interaction_day":0, "lies_detected":0, "culpa_used":false,
+  "thresholds": { "dialogo_desbloqueado":3, "ruptura_irreversivel":-3, "medo_bloqueia_simpatia":8 },
+  "schedule": [
+    { "start":6, "end":12, "location":"herb_garden" },
+    { "start":12, "end":20, "location":"home" }
+  ],
+  "sprite":"nora", "portrait_states":["kind","neutral","wary","knowing"]
+}

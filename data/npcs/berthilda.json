@@ -1,0 +1,11 @@
+{
+  "npc_id": "berthilda", "display_name": "Berthilda", "age": 74,
+  "trust": { "familiaridade":0, "lealdade":0, "respeito":0, "simpatia":0, "medo":2, "curiosidade":0 },
+  "arc_state": "locked", "last_interaction_day":0, "lies_detected":0, "culpa_used":false,
+  "thresholds": { "dialogo_desbloqueado":99, "ruptura_irreversivel":-10, "medo_bloqueia_simpatia":99 },
+  "schedule": [
+    { "start":6, "end":10, "location":"garden", "days":[7] },
+    { "start":6, "end":23, "location":"home" }
+  ],
+  "sprite":"berthilda", "portrait_states":["silent"]
+}

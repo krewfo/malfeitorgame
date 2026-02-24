@@ -1,0 +1,11 @@
+{
+  "npc_id": "davi", "display_name": "Davi", "age": 38,
+  "trust": { "familiaridade":0, "lealdade":0, "respeito":0, "simpatia":0, "medo":0, "curiosidade":4 },
+  "arc_state": "neutral", "last_interaction_day":0, "lies_detected":0, "culpa_used":false,
+  "thresholds": { "dialogo_desbloqueado":4, "ruptura_irreversivel":-5, "medo_bloqueia_simpatia":10 },
+  "schedule": [
+    { "start":6, "end":18, "location":"herb_garden" },
+    { "start":18, "end":23, "location":"home" }
+  ],
+  "sprite":"davi", "portrait_states":["focused","curious","pleased","neutral"]
+}

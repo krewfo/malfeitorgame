@@ -1,0 +1,14 @@
+{
+  "npc_id": "aldric", "display_name": "Frei Aldric", "age": 67,
+  "trust": { "familiaridade":3, "lealdade":1, "respeito":1, "simpatia":2, "medo":0, "curiosidade":4 },
+  "arc_state": "warming", "last_interaction_day":0, "lies_detected":0, "culpa_used":false,
+  "thresholds": { "dialogo_desbloqueado":4, "segredo_parcial":6, "segredo_total":8, "ruptura_irreversivel":-3, "medo_bloqueia_simpatia":99 },
+  "schedule": [
+    { "start":7, "end":11, "location":"church", "days":[3], "label":"missa" },
+    { "start":7, "end":12, "location":"church" },
+    { "start":12, "end":18, "location":"church_or_walk" },
+    { "start":18, "end":22, "location":"church" }
+  ],
+  "special": { "familiaridade_min":3 },
+  "sprite":"aldric", "portrait_states":["calm","thoughtful","amused","serious","warm"]
+}

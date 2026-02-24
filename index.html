@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MALFEITOR</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preload" href="assets/fonts/press-start-2p.woff2" as="font" crossorigin>
+</head>
+<body>
+  <div id="game-wrapper">
+    <canvas id="game-canvas" width="1920" height="1080"></canvas>
+
+    <div id="hud">
+      <div id="top-bar">
+        <span id="day-label">DIA 1 — MANHÃ</span>
+        <div id="week-progress"></div>
+        <span id="gold-label">💰 5</span>
+      </div>
+      <div id="notification-area"></div>
+    </div>
+
+    <div id="dialogue-box" class="hidden">
+      <div id="portrait-area">
+        <canvas id="portrait-canvas" width="40" height="40"></canvas>
+      </div>
+      <div id="dialogue-content">
+        <p id="npc-name"></p>
+        <p id="dialogue-text"></p>
+      </div>
+      <div id="options-container"></div>
+    </div>
+
+    <div id="trust-panel" class="hidden"></div>
+    <div id="fade-overlay"></div>
+  </div>
+
+  <script src="lib/howler.min.js"></script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

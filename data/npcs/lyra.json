@@ -1,0 +1,12 @@
+{
+  "npc_id": "lyra", "display_name": "Lyra", "age": 13,
+  "trust": { "familiaridade":0, "lealdade":0, "respeito":0, "simpatia":0, "medo":8, "curiosidade":5 },
+  "arc_state": "hostile", "last_interaction_day":0, "lies_detected":0, "culpa_used":false,
+  "thresholds": { "dialogo_desbloqueado":5, "ruptura_irreversivel":-5, "medo_bloqueia_simpatia":10 },
+  "schedule": [
+    { "start":7, "end":12, "location":"home_area", "days":[1,2,3,4,5] },
+    { "start":12, "end":18, "location":"town_square" },
+    { "start":18, "end":23, "location":"home_area" }
+  ],
+  "sprite":"lyra", "portrait_states":["hostile_shouting","hostile","confused","quiet","neutral"]
+}

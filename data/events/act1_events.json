@@ -1,0 +1,35 @@
+[
+  {
+    "id": "EVT_RENT_WARNING",
+    "day_range": [4, 5],
+    "hour_range": [6, 12],
+    "conditions": [],
+    "flag_on_fire": "FLAG_EVT_RENT_WARNING_FIRED",
+    "effects": {
+      "notification": "O aluguel vence na Sexta. Você tem {gold} moedas. Precisa de 15.",
+      "flags_set": []
+    }
+  },
+  {
+    "id": "EVT_GARETH_MENTIONS_DAVI",
+    "day_range": [3, 7],
+    "hour_range": [6, 23],
+    "conditions": ["FLAG_NPC_GARETH_INTRO_COMPLETE"],
+    "flag_on_fire": "FLAG_EVT_GARETH_MENTIONS_DAVI",
+    "effects": {
+      "notification": "Gareth mencionou um herbalista chamado Davi que trabalha no jardim ao sul.",
+      "flags_set": ["FLAG_HINT_DAVI_UNLOCKED"]
+    }
+  },
+  {
+    "id": "EVT_DREAM_HINT",
+    "day_range": [5, 5],
+    "hour_range": [18, 23],
+    "conditions": [],
+    "flag_on_fire": "FLAG_EVT_DREAM_HINT_FIRED",
+    "effects": {
+      "notification": "Uma dor de cabeça. Fragmentos de memória se agitam. Algo virá à noite.",
+      "flags_set": []
+    }
+  }
+]

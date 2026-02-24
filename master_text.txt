@@ -1,0 +1,1246 @@
+﻿=== PAGE 1 ===
+Ôÿá  ÔÜö  Ôÿá 
+MALFEITOR: O Vil├úo que 
+Sobreviveu 
+MASTER DEVELOPMENT BIBLE 
+Technical Design Document  |  Dialogue Script  |  Asset Bible 
+v4.0  |  Stack: HTML + CSS + JavaScript  |  Demo: Ato I, Dias 1ÔÇô7 
+ 
+­ƒîÉ WEB: Este documento substitui completamente o MasterBible v3.0 (Godot). O 
+jogo roda no browser. Sem motor propriet├írio. Sem compila├º├úo. Stack: HTML5 + 
+CSS3 + JavaScript vanilla + bibliotecas leves. 
+ 
+├ìNDICE 
+ 
+PARTE I ÔÇö Technical Design Document (TDD) 
+  1.1  Stack Web ÔÇö Decis├úo Definitiva 
+  1.2  Arquitetura do Projeto ÔÇö Estrutura de Pastas 
+  1.3  Schema JSON ÔÇö NPC Profile e Trust 
+  1.4  Sistema MASCARA ÔÇö Aspecto ├ù NPC Delta Table 
+  1.5  Schema JSON ÔÇö N├│ de Di├ílogo 
+  1.6  Schema JSON ÔÇö Flags 
+  1.7  Algoritmo de Save/Load (localStorage) 
+  1.8  Algoritmo de Avalia├º├úo de Final 
+  1.9  Sistema de Tempo e Calend├írio 
+  1.10 Sistema de Economia 
+  1.11 Magia Latente 
+  1.12 Sistema de Rumores 
+ 
+PARTE II ÔÇö Dialogue Script Master: Demo (Dias 1ÔÇô7) 
+  Cenas D1-01 at├® D5-01 com branches completos 
+ 
+PARTE III ÔÇö Asset Bible Web 
+  3.1  Sprites (CSS + PNG spritesheet) 
+  3.2  Paleta de Cores Oficial 
+
+=== PAGE 2 ===
+  3.3  UI: Layout e Componentes 
+  3.4  ├üudio 
+ 
+ 
+
+=== PAGE 3 ===
+PARTE I ÔÇö TECHNICAL DESIGN DOCUMENT 
+1.1 ÔÇö Stack Web ÔÇö Decis├úo Definitiva 
+Ôùå A mudan├ºa de Godot para Web ├® a decis├úo mais importante deste documento. Implica 
+em zero compila├º├úo, deploy instant├óneo, acesso via URL e zero atrito de instala├º├úo para 
+playtesters. 
+ 
+Camada 
+Tecnologia 
+Justificativa 
+Alternativa 
+Considerada 
+Motor de 
+jogo 
+JavaScript Vanilla + 
+Canvas 2D API 
+Zero depend├¬ncia, 
+m├íximo controle, roda 
+em qualquer browser 
+Phaser.js (mais 
+pesado, 
+desnecess├írio para 
+este escopo) 
+Rendering 
+2D 
+HTML5 Canvas + 
+requestAnimationFrame 
+Pixel-perfect rendering, 
+controle total de z-
+index 
+WebGL (overkill para 
+pixel art 2D) 
+UI / HUD 
+HTML + CSS sobre o 
+Canvas 
+DOM ├® mais f├ícil para 
+UI que Canvas; separa 
+rendering de interface 
+Canvas puro para UI 
+(trabalhoso e fr├ígil) 
+Dados de 
+jogo 
+JSON files (fetch) ou 
+inline JS objects 
+Simples, edit├ível sem 
+build 
+SQLite WASM 
+(complexo demais 
+para demo) 
+Save 
+System 
+localStorage 
+Nativo no browser, 
+zero servidor 
+IndexedDB 
+(necess├írio s├│ se save 
+> 5MB) 
+├üudio 
+Web Audio API + 
+Howler.js 
+Howler abstrai 
+compatibilidade entre 
+browsers 
+Tone.js (focado em 
+s├¡ntese, n├úo playback) 
+Pixel Art 
+Scaling 
+CSS image-rendering: 
+pixelated 
+Mant├®m visual pixel art 
+sem blur 
+Canvas drawImage 
+scaling manual 
+Bundling 
+Nenhum ÔÇö arquivos 
+ES Modules nativos 
+Zero configura├º├úo, 
+funciona em file://, sem 
+Node.js no runtime 
+Vite/Webpack 
+(adiciona 
+complexidade 
+desnecess├íria para 
+demo) 
+ 
+­ƒîÉ WEB: Para a DEMO do Ato I (Dias 1-7): JavaScript vanilla puro. Sem frameworks. 
+Sem bundler. Um arquivo index.html abre e o jogo roda. Isso ├® intencional ÔÇö m├íxima 
+portabilidade para playtesters. 
+ 
+1.2 ÔÇö Arquitetura do Projeto ÔÇö Estrutura de Pastas 
+malfeitor/ 
+
+=== PAGE 4 ===
+Ôö£ÔöÇÔöÇ index.html                    ÔåÉ Entry point. Abre e joga. 
+Ôö£ÔöÇÔöÇ style.css                     ÔåÉ Estilos globais + pixel art classes 
+Ôöé 
+Ôö£ÔöÇÔöÇ src/                          ÔåÉ Todo JavaScript 
+Ôöé   Ôö£ÔöÇÔöÇ main.js                   ÔåÉ Init, game loop, scene manager 
+Ôöé   Ôö£ÔöÇÔöÇ engine/ 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ renderer.js           ÔåÉ Canvas 2D: draw sprites, tiles, effects 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ input.js              ÔåÉ Teclado, mouse, touch 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ audio.js              ÔåÉ Wrapper Howler.js 
+Ôöé   Ôöé   ÔööÔöÇÔöÇ save.js               ÔåÉ localStorage serializer 
+Ôöé   Ôö£ÔöÇÔöÇ systems/ 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ FlagSystem.js         ÔåÉ Singleton. Fonte de verdade de todo estado. 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ TrustSystem.js        ÔåÉ 6 dimens├Áes por NPC + arc state 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ MascaraSystem.js      ÔåÉ Aspecto ÔåÆ delta table ÔåÆ aplica trust 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ DialogueSystem.js     ÔåÉ Carrega JSON, renderiza caixa, branches 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ TimeSystem.js         ÔåÉ Dia, hora, semana, ticks 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ EconomySystem.js      ÔåÉ Ouro, aluguel, rendas 
+Ôöé   Ôöé   ÔööÔöÇÔöÇ EventSystem.js        ÔåÉ Eventos din├ómicos com janela de tempo 
+Ôöé   Ôö£ÔöÇÔöÇ scenes/ 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ SceneManager.js       ÔåÉ Troca de cenas com fade 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ TavernScene.js        ÔåÉ Interior da Taverna 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ TownSquareScene.js    ÔåÉ Pra├ºa Central 
+Ôöé   Ôöé   ÔööÔöÇÔöÇ ChurchScene.js        ÔåÉ Igreja 
+Ôöé   Ôö£ÔöÇÔöÇ actors/ 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ Player.js             ÔåÉ Malfeitor: movimento, anima├º├úo, estado 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ NPC.js                ÔåÉ Classe base de NPC 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ Gareth.js 
+Ôöé   Ôöé   ÔööÔöÇÔöÇ Lyra.js 
+Ôöé   ÔööÔöÇÔöÇ ui/ 
+Ôöé       Ôö£ÔöÇÔöÇ DialogueBox.js        ÔåÉ Caixa de di├ílogo HTML sobre canvas 
+Ôöé       Ôö£ÔöÇÔöÇ HUD.js                ÔåÉ Dia, ouro, notifica├º├Áes 
+Ôöé       ÔööÔöÇÔöÇ TrustPanel.js         ÔåÉ Painel de confian├ºa sem n├║meros 
+Ôöé 
+Ôö£ÔöÇÔöÇ data/ 
+Ôöé   Ôö£ÔöÇÔöÇ dialogues/ 
+Ôöé   Ôöé   ÔööÔöÇÔöÇ act1_week1.json       ÔåÉ Todos os n├│s de di├ílogo Dias 1-7 
+Ôöé   Ôö£ÔöÇÔöÇ npcs/ 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ gareth.json 
+Ôöé   Ôöé   ÔööÔöÇÔöÇ lyra.json 
+Ôöé   ÔööÔöÇÔöÇ events/ 
+Ôöé       ÔööÔöÇÔöÇ act1_events.json 
+Ôöé 
+Ôö£ÔöÇÔöÇ assets/ 
+Ôöé   Ôö£ÔöÇÔöÇ sprites/                  ÔåÉ PNGs com spritesheet 
+Ôöé   Ôö£ÔöÇÔöÇ tiles/                    ÔåÉ Tilesets 16x16 
+Ôöé   Ôö£ÔöÇÔöÇ audio/ 
+Ôöé   Ôöé   Ôö£ÔöÇÔöÇ music/               ÔåÉ OGG 
+Ôöé   Ôöé   ÔööÔöÇÔöÇ sfx/                 ÔåÉ WAV/OGG 
+Ôöé   ÔööÔöÇÔöÇ fonts/ 
+Ôöé       ÔööÔöÇÔöÇ press-start-2p.woff2 ÔåÉ Google Fonts offline 
+Ôöé 
+ÔööÔöÇÔöÇ lib/ 
+    ÔööÔöÇÔöÇ howler.min.js             ÔåÉ ├Ünica depend├¬ncia externa 
+
+=== PAGE 5 ===
+ 
+1.3 ÔÇö Schema JSON ÔÇö NPC Profile e Trust 
+// data/npcs/gareth.json 
+{ 
+  "npc_id": "gareth", 
+  "display_name": "Gareth", 
+  "age": 45, 
+  "trust": { 
+    "familiaridade":  0,   // [-10, 20] ÔÇö decai -1/dia sem contato 
+    "lealdade":       0,   // [-10, 15] ÔÇö nunca decai espontaneamente 
+    "respeito":       0,   // [-10, 15] ÔÇö cai com falhas de tarefa 
+    "simpatia":       0,   // [-10, 15] ÔÇö cai com sarcasmo repetido 
+    "medo":           2,   // [0,  15]  ÔÇö decai -1/semana sem magia/autoridade 
+    "curiosidade":    3    // [0,  10]  ÔÇö cai se Malfeitor for previs├¡vel 
+  }, 
+  "arc_state": "neutral",  // hostile|neutral|warming|trust|broken|locked 
+  "last_interaction_day": 0, 
+  "lies_detected": 0, 
+  "culpa_used": false, 
+  "thresholds": { 
+    "dialogo_desbloqueado":   5, 
+    "ruptura_irreversivel":  -5, 
+    "medo_bloqueia_simpatia": 10 
+  }, 
+  "schedule": [ 
+    { "start": 6, "end": 11, "location": "tavern_kitchen" }, 
+    { "start": 11, "end": 23, "location": "tavern_main" } 
+  ], 
+  "sprite": "gareth", 
+  "portrait_states": ["neutral", "pleased", "suspicious", "angry"] 
+} 
+ 
+Ôùå Os perfis de NPC s├úo carregados uma vez no init e mantidos em mem├│ria pelo 
+TrustSystem. O JSON em disco ├® apenas o estado inicial. O estado mut├ível vive no save 
+(localStorage). 
+ 
+1.4 ÔÇö Sistema MASCARA ÔÇö ASPECT_DELTA_TABLE Completa 
+Ôùå Esta ├® a tabela de lei absoluta. Cada aspecto ├ù NPC = delta aplicado ├ás 6 dimens├Áes. 
+Implementar como objeto JavaScript frozen (Object.freeze) ÔÇö nunca mut├ível em runtime. 
+ 
+Aspecto 
+Gareth 
+Lyra 
+Aldric 
+Serena 
+Davi 
+Stenn 
+Nora 
+SINCERIDADE 
++1 FAM 
++1 RES 
++1 FAM +1 
+SIM 
++1 LEA 
++1 SIM 
++1 RES 
+-1 RES 
++1 RES 
+SARCASMO 
++1 SIM 
+-2 SIM +1 
+FAM 
+-1 SIM 
+-1 SIM 
++1 CUR 
++1 SIM 
+-1 RES 
+-1 RES 
+
+=== PAGE 6 ===
+VULNERABILIDADE 
++1 LEA 
++2 SIM 
+(warming+) 
++2 SIM 
++1 LEA 
++1 SIM 
++2 CUR 
++1 MED 
+(explora) 
++1 FAM 
+MANIPULA├ç├âO 
+sem 
+efeito 
+-3 LEA 
+(detecta) 
+-3 LEA 
+(detecta) 
+-2 SIM 
+-1 CUR 
++2 RES 
++1 LEA 
+-2 RES 
+CULPA 
+-1 SIM 
++1 SIM +1 
+CUR (1x) 
++1 SIM 
++1 FAM 
++2 CUR 
+sem 
+efeito 
+sem 
+efeito 
+CURIOSIDADE 
+-1 CUR 
++1 SIM 
++1 FAM 
++1 FAM 
++1 FAM 
++2 RES 
++1 CUR 
+sem 
+efeito 
++2 RES 
++1 CUR 
+AUTORIDADE 
++1 MED -
+2 SIM 
+-3 LEA +2 
+MED 
++1 MED -
+1 LEA 
+-2 LEA 
+-2 CUR 
++1 RES 
+-2 RES 
+SIL├èNCIO 
++1 CUR 
++2 CUR +1 
+FAM 
++1 FAM 
++2 FAM 
+-1 SIM 
+sem 
+efeito 
++1 FAM 
+ 
+Legenda: FAM=familiaridade, LEA=lealdade, RES=respeito, SIM=simpatia, MED=medo, 
+CUR=curiosidade 
+ 
+Regras especiais: 
+ÔÇó CULPA: segunda vez com mesmo NPC ÔåÆ delta ├À 2. Sinalizar visualmente ao jogador 
+(op├º├úo desbotada). 
+ÔÇó AUTORIDADE: seta FLAG_PLAYER_AUTHORITY_USED_THIS_WEEK. Usado no 
+c├ílculo de decaimento de medo semanal. 
+ÔÇó MANIPULA├ç├âO em Aldric ou Lyra: penalidade de lealdade IMEDIATA ÔÇö eles detectam 
+sempre. 
+ÔÇó SIL├èNCIO em Berthilda (Ato I): ├║nico aspecto que ela 'percebe' ÔÇö n├úo tem efeito mas 
+n├úo ├® bloqueado. 
+ÔÇó Qualquer aspecto com Berthilda (arc_state=locked): retorna sem aplicar delta. 
+ 
+1.5 ÔÇö Schema JSON ÔÇö N├│ de Di├ílogo 
+// Formato de cada n├│ em act1_week1.json 
+{ 
+  "node_id": "D1-02-001", 
+  "scene": "town_square", 
+  "trigger": { 
+    "type": "proximity",    // proximity | flag | time | auto | manual 
+    "npc": "lyra", 
+    "day_range": [1, 1], 
+    "conditions": [], 
+    "priority": 100          // maior = executa primeiro 
+  }, 
+  "speaker": "lyra", 
+  "portrait_state": "hostile_shouting", 
+  "text": "Olha s├│ quem apareceu. O Destruidor de Aldeias...", 
+  "aspect_options": [ 
+    { 
+
+=== PAGE 7 ===
+      "id": "D1-02-001-A", 
+      "aspect": "SARCASMO", 
+      "text": "Obrigado pelo resumo. Economizou minha apresenta├º├úo.", 
+      "visible_when": [], 
+      "hidden_when": [], 
+      "effects": { 
+        "trust_deltas": { "lyra": { "simpatia": -1, "familiaridade": 1, "medo": 
+-1 } }, 
+        "flags_set": ["FLAG_NPC_LYRA_D1_SARCASM"], 
+        "next_node": "D1-02-002-A" 
+      } 
+    } 
+  ], 
+  "no_choice_result": { 
+    "aspect": "SIL├èNCIO", 
+    "text": "[Malfeitor acena e continua andando]", 
+    "effects": { 
+      "trust_deltas": { "lyra": { "curiosidade": 2, "familiaridade": 1 } }, 
+      "flags_set": ["FLAG_NPC_LYRA_D1_SILENCE"], 
+      "next_node": "D1-02-002-C" 
+    } 
+  }, 
+  "music_override": null 
+} 
+ 
+1.6 ÔÇö Schema JSON ÔÇö Flags 
+Ôùå Todas as flags vivem no FlagSystem.js como um objeto central. S├úo salvas/carregadas 
+do localStorage. Conven├º├úo de nomenclatura ├® obrigat├│ria ÔÇö nunca criar flags ad hoc em 
+c├│digo de cena. 
+ 
+// src/systems/FlagSystem.js 
+const FLAGS = Object.seal({ 
+  // ÔöÇÔöÇ NPC FLAGS ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ 
+  FLAG_NPC_GARETH_FIRST_JOB:            false, 
+  FLAG_NPC_GARETH_VULNERABILITY_1:      false, 
+  FLAG_NPC_GARETH_FIRST_DRINK_OFFERED:  false, 
+  FLAG_NPC_LYRA_FIRST_MEETING:          false, 
+  FLAG_NPC_LYRA_CULPA_USED:             false, 
+  FLAG_NPC_LYRA_READING_STARTED:        false, 
+  FLAG_NPC_LYRA_ARC_BROKEN:             false, // ­ƒö┤ PERMANENTE 
+  FLAG_NPC_LYRA_LIE_POTENTIAL:          false, 
+  FLAG_NPC_LYRA_LIE_DETECTED:           false, 
+  FLAG_NPC_LYRA_FATHER_PARALLEL_1:      false, 
+  FLAG_NPC_ALDRIC_INTRO_COMPLETE:       false, 
+  FLAG_NPC_ALDRIC_DEBT_HINT_1:          false, 
+  FLAG_NPC_DAVI_INTRO_COMPLETE:         false, 
+  FLAG_NPC_SERENA_FIRST_MEETING:        false, 
+  FLAG_NPC_NORA_INTRO:                  false, 
+  FLAG_NPC_BERTHILDA_ILL_HELPED:        false, 
+  FLAG_NPC_BERTHILDA_ILL_IGNORED:       false, 
+
+=== PAGE 8 ===
+  // ÔöÇÔöÇ WORLD FLAGS ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ 
+  FLAG_WORLD_STENN_DEBT:                false, 
+  FLAG_WORLD_DROUGHT_REVEALED:          false, 
+  FLAG_WORLD_FORBIDDEN_BOOK_READ:       false, 
+  FLAG_WORLD_STENN_CONFRONTED_PUBLIC:   false, 
+  FLAG_VILLAGE_TRUST_HIT_1:             false, 
+  FLAG_VILLAGE_TRUST_HIT_2:             false, 
+  FLAG_VILLAGE_HOSTILE:                 false, // ­ƒö┤ PERMANENTE 
+  // ÔöÇÔöÇ PLAYER FLAGS ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ 
+  FLAG_PLAYER_MAGIC_LEVEL:              0,     // int 0-4 
+  FLAG_PLAYER_MAGIC_USED_COUNT:         0,     // int ÔÇö >= 3 fecha finais 
+  FLAG_PLAYER_MAGIC_USED_THIS_WEEK:     false, 
+  FLAG_PLAYER_AUTHORITY_USED_THIS_WEEK: false, 
+  FLAG_PLAYER_CAPE_STATE:               0,     // int 0-5 
+  FLAG_PLAYER_EVICTED:                  false, 
+  FLAG_PLAYER_KNOWS_POISONS:            false, 
+  FLAG_PLAYER_POISON_USED:              false, // ­ƒö┤ PERMANENTE 
+  // ÔöÇÔöÇ CRAFT FLAGS ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ 
+  FLAG_CRAFT_HERB_LEVEL:                0,     // int 0-5 
+  FLAG_CRAFT_CARPENTRY_LEVEL:           0, 
+  FLAG_CRAFT_WRITING_LEVEL:             0, 
+  FLAG_CRAFT_SWEEPING_ACTIVE:           false, 
+  // ÔöÇÔöÇ ENDING FLAGS ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ 
+  FLAG_ENDING_SCORE:                    0,     // recalculado continuamente 
+  FLAG_ENDING_REDEMPTION_AVAILABLE:     false, 
+  FLAG_ENDING_IMPASSE_AVAILABLE:        false, 
+  FLAG_ENDING_RELAPSE_LOCKED_IN:        false, // ­ƒö┤ PERMANENTE 
+  FLAG_ACT_1_COMPLETE:                  false, 
+  FLAG_SYSTEM_NEW_GAME_PLUS:            false, 
+  // ÔöÇÔöÇ MEMORY / SONHOS ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ 
+  FLAG_MEMORY_TRIBUNAL_SEEN:            false, 
+  FLAG_MEMORY_FIRST_RAID_SEEN:          false, 
+}); 
+ 
+// Flags que jamais revertem para false 
+const PERMANENT_FLAGS = new Set([ 
+  'FLAG_NPC_LYRA_ARC_BROKEN', 
+  'FLAG_VILLAGE_HOSTILE', 
+  'FLAG_PLAYER_POISON_USED', 
+  'FLAG_ENDING_RELAPSE_LOCKED_IN', 
+]); 
+ 
+export function setFlag(id, value, source='') { 
+  if (!(id in FLAGS)) throw new Error(`Flag desconhecida: ${id}`); 
+  if (PERMANENT_FLAGS.has(id) && FLAGS[id] === true && value === false) return; 
+  const old = FLAGS[id]; 
+  FLAGS[id] = value; 
+  _auditLog.push({ day: TimeSystem.day, flag: id, old, value, source }); 
+  _recalcEndingScore(); 
+} 
+export const getFlag = id => FLAGS[id]; 
+
+=== PAGE 9 ===
+ 
+1.7 ÔÇö Sistema de Save/Load (localStorage) 
+// src/engine/save.js 
+const SAVE_KEY = 'malfeitor_save_v1'; 
+ 
+export function saveGame() { 
+  const state = { 
+    version: '1.0', 
+    timestamp: Date.now(), 
+    ingame: { act: TimeSystem.act, day: TimeSystem.day, hour: TimeSystem.hour 
+}, 
+    player: { gold: EconomySystem.gold, capeState: 
+getFlag('FLAG_PLAYER_CAPE_STATE') }, 
+    flags:  FlagSystem.serialize(),     // todos os flags + audit log 
+    trust:  TrustSystem.serialize(),    // todos os perfis de NPC 
+    crafts: CraftSystem.serialize(), 
+    rumors: RumorSystem.serialize(), 
+  }; 
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state)); 
+} 
+ 
+export function loadGame() { 
+  const raw = localStorage.getItem(SAVE_KEY); 
+  if (!raw) return false; 
+  const state = JSON.parse(raw); 
+  // Validar vers├úo ÔÇö migra├º├úo futura aqui 
+  if (state.version !== '1.0') { localStorage.removeItem(SAVE_KEY); return 
+false; } 
+  FlagSystem.deserialize(state.flags); 
+  TrustSystem.deserialize(state.trust); 
+  TimeSystem.set(state.ingame); 
+  EconomySystem.set(state.player.gold); 
+  return true; 
+} 
+ 
+Ôùå O jogo salva automaticamente ap├│s cada di├ílogo conclu├¡do, a cada transi├º├úo de cena e 
+ao fechar a aba (beforeunload event). Nunca depender de save manual do jogador. 
+ 
+1.8 ÔÇö Algoritmo de Avalia├º├úo de Final 
+Ôùå Roda ap├│s cada decis├úo marcada como ENDING_CRITICAL. N├úo no fim do jogo. 
+ 
+// Chamado por FlagSystem._recalcEndingScore() 
+export function evaluateEndingState() { 
+  let score = 0; 
+  // Reden├º├úo Plena requer >= 85 
+  if (getFlag('FLAG_NPC_LYRA_ARC_COMPLETE'))      score += 30; 
+  if (getFlag('FLAG_NPC_BERTHILDA_APPROVED'))     score += 30; 
+
+=== PAGE 10 ===
+  if (getFlag('FLAG_NPC_ALDRIC_FULL_REVEAL'))     score += 15; 
+  if (!getFlag('FLAG_PLAYER_MAGIC_USED_COUNT'))   score += 15; 
+  if (getFlag('FLAG_WORLD_STENN_CONFRONTED_PUBLIC')) score += 10; 
+  // Penalidades 
+  if (getFlag('FLAG_NPC_LYRA_ARC_BROKEN'))        score -= 30; 
+  if (getFlag('FLAG_PLAYER_MAGIC_USED_COUNT') >= 3) score -= 20; 
+  if (getFlag('FLAG_PLAYER_POISON_USED'))         score -= 15; 
+  if (getFlag('FLAG_VILLAGE_HOSTILE'))            score -= 25; 
+  setFlag('FLAG_ENDING_SCORE', score, 'auto_recalc'); 
+  setFlag('FLAG_ENDING_REDEMPTION_AVAILABLE', score >= 85, 'auto_recalc'); 
+  setFlag('FLAG_ENDING_IMPASSE_AVAILABLE', score >= 50 && score < 85, 
+'auto_recalc'); 
+} 
+ 
+1.9 ÔÇö Sistema de Tempo e Calend├írio 
+// src/systems/TimeSystem.js 
+export const TimeSystem = { 
+  act: 1, day: 1, hour: 8, 
+  // hour: 6=manh├ú, 12=tarde, 18=entardecer, 22=noite 
+  dayOfWeek: 1,  // 1=Seg ... 7=Dom 
+  RENT_DUE_DAY: 5,  // Sexta 
+ 
+  advance(hours = 1) { 
+    this.hour += hours; 
+    if (this.hour >= 24) { 
+      this.hour = 6;  // manh├ú 
+      this.day++; 
+      this.dayOfWeek = ((this.dayOfWeek) % 7) + 1; 
+      TrustSystem.tickDayEnd(this.day); 
+      EventSystem.checkEvents(this.day, this.hour); 
+    } 
+    if (this.dayOfWeek === 1 && this.hour === 6) { 
+      TrustSystem.tickWeekEnd(); 
+      EconomySystem.checkRent(this.day); 
+    } 
+  }, 
+ 
+  getTimeLabel() { 
+    if (this.hour < 12) return 'MANH├â'; 
+    if (this.hour < 18) return 'TARDE'; 
+    if (this.hour < 22) return 'ENTARDECER'; 
+    return 'NOITE'; 
+  } 
+}; 
+ 
+1.10 ÔÇö Sistema de Economia 
+Fonte de Renda 
+Moedas/Dia 
+Dispon├¡vel 
+Requisito 
+
+=== PAGE 11 ===
+Varrer taverna 
+(Gareth) 
+2ÔÇô3 
+Ato I, Sem 
+1+ 
+Nenhum ÔÇö dispon├¡vel desde Dia 1 
+Coleta de ervas 
+(Davi) 
+4ÔÇô6 
+Ato I, Sem 
+2+ 
+FLAG_NPC_DAVI_INTRO_COMPLETE 
+Copiar 
+documentos 
+(Aldric) 
+6ÔÇô8 
+Ato I, Sem 
+2+ 
+FAM_ALDRIC >= 3 + 
+CRAFT_WRITING >= 1 
+Reparos 
+carpintaria 
+(Serena) 
+8ÔÇô12 
+Ato I, Sem 
+3+ 
+FAM_SERENA + 
+CRAFT_CARPENTRY >= 1 
+Vender rem├®dios 
+(Davi) 
+10ÔÇô15 
+Ato II 
+CRAFT_HERB >= 2 
+Cozinhar (Gareth) 
+12ÔÇô20 
+Ato II 
+FAM_GARETH >= 7 
+Magia clandestina 
+50+ / uso 
+Ato III 
+MAGIC_LEVEL >= 2 ÔÇö ALTO CUSTO 
+MORAL 
+ 
+// C├ílculo de risco de despejo 
+function calcEvictionRisk(gold, dayOfWeek) { 
+  const daysToFriday = (5 - dayOfWeek + 7) % 7 || 7; 
+  const projected = gold + (EconomySystem.dailyIncome() * daysToFriday); 
+  if (projected < 15) return 'RISK_HIGH';   // Gareth menciona na Ter├ºa 
+  if (projected < 20) return 'RISK_MEDIUM'; 
+  return 'RISK_NONE'; 
+} 
+ 
+1.11 ÔÇö Magia Latente 
+N├¡vel 
+Nome 
+Dispon├¡vel 
+Controle 
+Custo por uso 
+0 
+Dormente 
+Ato I 
+ÔÇö 
+ÔÇö 
+1 
+Involunt├íria 
+Ato I final 
+Nenhum ÔÇö 
+acontece sem 
+escolha 
+40% chance de ser visto 
+2 
+Consciente 
+inst├ível 
+Ato II 
+Tentativa: 40% 
+sucesso 
+Sempre vis├¡vel ÔÇö +3 medo todos 
+os NPCs presentes 
+3 
+Control├ível com 
+custo 
+Ato III 
+Funciona sempre 
++marca vis├¡vel na capa + -2 
+simpatia presentes 
+4 
+Dom├¡nio (rota 
+Reca├¡da) 
+Ato III 
+avan├ºado 
+Pleno controle 
+Fecha Reden├º├úo e Impasse 
+permanentemente 
+ 
+1.12 ÔÇö Sistema de Rumores 
+Ôùå Rumores circulam passivamente. O jogador os ouve ao ficar pr├│ximo de grupos. N├úo h├í 
+menu de rumores. 
+
+=== PAGE 12 ===
+ 
+ID 
+Texto original 
+Fonte 
+Spread/dia 
+TTL 
+(dias) 
+RUM_MAGE 
+Dizem que ele ├® um 
+mago das ru├¡nas do 
+norte. 
+Stenn 
+30% 
+14 
+RUM_KILLER 
+Dizem que matou 
+duzentas pessoas 
+em Edenvale. 
+An├┤nimo 
+40% 
+21 
+RUM_SERVANT 
+O Terror do Norte 
+varrendo o ch├úo da 
+taverna. 
+Qualquer 
+alde├úo 
+60% 
+7 
+RUM_LYRA 
+A garota jogou 
+pedras nele e ele n├úo 
+fez nada. 
+Testemunha 
+D1-02 
+50% 
+10 
+RUM_ALDRIC 
+O Frei o trouxe. O 
+Frei deve saber algo. 
+Beata da igreja 
+20% 
+28 
+ 
+ 
+
+=== PAGE 13 ===
+PARTE II ÔÇö DIALOGUE SCRIPT MASTER: DEMO 
+(DIAS 1ÔÇô7) 
+Ôùå Cada cena est├í escrita em formato de script completo. O DialogueSystem.js l├¬ os n├│s 
+por ID do JSON e renderiza. Os textos aqui s├úo o conte├║do exato do JSON. 
+ 
+CENA D1-01 ÔÇö TAVERNA: Acordar. Primeiro contato com Gareth. 
+Trigger: Autom├ítico ÔÇö in├¡cio do jogo. Malfeitor acorda no quarto da taverna. 
+Local: TavernScene ÔÇö quarto small. NPCs presentes: Gareth. 
+ 
+[D1-01-001] NARRA├ç├âO: Voc├¬ acorda. A cama ├® dura. O teto tem uma mancha de umidade. 
+Voc├¬ foi derrotado. Voc├¬ est├í vivo. N├úo sabe por qual ordem essas coisas importam. 
+ 
+[D1-01-002] GARETH: (Do corredor, sem abrir a porta) Sei que voc├¬ t├í acordado. Posso ouvir 
+passos diferentes quando uma pessoa finge dormir. 
+ 
+[D1-01-003] GARETH: O Frei me convenceu a deixar voc├¬ ficar. N├úo me convenceu. Ent├úo 
+temos um acordo tempor├írio: quinze moedas por semana. Adiantado. Voc├¬ tem at├® Sexta. 
+ 
+[D1-01-004] GARETH: Caf├® da manh├ú j├í foi. Tem p├úo na cozinha se voc├¬ trabalhar por ele. O 
+trabalho ├® varrer. N├úo ├® dif├¡cil. N├úo exige talento. 
+ 
+ÔåÆ ESCOLHA DO JOGADOR: 
+ÔÇó [SINCERIDADE] "Onde fica a vassoura?" 
+ÔÇó [SARCASMO] "Estou aliviado. Sou excelente em n├úo ter talento." 
+ÔÇó [VULNERABILIDADE] "Estou com dor. Mas vou varrer." 
+ÔÇó [SIL├èNCIO] [Malfeitor se levanta em sil├¬ncio] 
+ 
+Resposta SINCERIDADE ÔÇö [D1-01-005A]: 
+[D1-01-005A] GARETH: Atr├ís da porta. Voc├¬ come├ºa depois de comer. N├úo come de gra├ºa ÔÇö 
+a metade do que ganhar hoje vai para o p├úo. Entendido? 
+Ô£ª Efeito: +1 RES_GARETH. FLAG_NPC_GARETH_FIRST_JOB = true. 
+ 
+Resposta SARCASMO ÔÇö [D1-01-005B]: 
+[D1-01-005B] GARETH: (Uma pausa longa) Atr├ís da porta. (Sai sem mais explica├º├Áes) 
+Ô£ª Efeito: -1 SIM_GARETH, +1 CUR_GARETH. FLAG_NPC_GARETH_FIRST_JOB = true. 
+ 
+Resposta VULNERABILIDADE ÔÇö [D1-01-005C]: 
+
+=== PAGE 14 ===
+[D1-01-005C] GARETH: (Pausa. Tom muda ligeiramente) Tem emplastro embaixo da pia. 
+Vassoura atr├ís da porta. N├úo precisa fazer tudo hoje. 
+Ô£ª Efeito: +1 SIM_GARETH, +1 LEA_GARETH. FLAG_NPC_GARETH_FIRST_JOB = true. 
+ 
+Resposta SIL├èNCIO ÔÇö [D1-01-005D]: 
+[D1-01-005D] GARETH: (Sem virar) Vassoura atr├ís da porta. P├úo na cozinha. (Sai) 
+Ô£ª Efeito: +2 FAM_GARETH, +1 CUR_GARETH. FLAG_NPC_GARETH_FIRST_JOB = true. 
+ 
+Ôûá Fim de cena D1-01. Jogador ganha acesso ao mapa da aldeia. EconomySystem ativa renda 
+de 2-3/dia (varrer taverna). 
+ 
+CENA D1-02 ÔÇö PRA├çA CENTRAL: Primeiro confronto com Lyra. 
+Trigger: Malfeitor sai da taverna pela primeira vez. Ocorre uma ├║nica vez. Dia 1 apenas. 
+­ƒö┤ CR├ìTICO: Esta cena define a primeira impress├úo p├║blica. Alde├Áes an├┤nimos 
+presentes t├¬m trust coletivo. AUTORIDADE aqui = -5 trust coletivo PERMANENTE e 
+FLAG_VILLAGE_TRUST_HIT_1. 
+ 
+[D1-02-001] LYRA: Olha s├│ quem apareceu. O Destruidor de Aldeias. O Terror do Norte. Que 
+nome grande pra um homem que mal consegue carregar ├ígua. 
+ 
+[D1-02-002] LYRA: (Mais alto, para os alde├Áes ouvirem) Minha m├úe perdeu a raz├úo por causa 
+do que esse homem fez. Voc├¬s sabem disso? Sabem quem est├í morando aqui? 
+ 
+ÔåÆ ESCOLHA DO JOGADOR: 
+ÔÇó [SARCASMO] "Obrigado pelo resumo. Economizou minha apresenta├º├úo." 
+ÔÇó [CULPA] "Voc├¬ tem raz├úo em cada palavra." 
+ÔÇó [SIL├èNCIO] [Malfeitor olha para ela, acena com a cabe├ºa, continua andando] 
+ÔÇó [AUTORIDADE] "Crian├ºa. Voc├¬ n├úo sabe de nada." ÔåÉ ERRO CR├ìTICO 
+ 
+Resposta SARCASMO ÔÇö [D1-02-003A]: 
+[D1-02-003A] LYRA: (Mand├¡bula fechada) Faz gra├ºa? Acha que tudo ├® engra├ºado? 
+[D1-02-003A-2] NARRA├ç├âO: Os alde├Áes n├úo sabem se riem ou saem. Malfeitor j├í foi embora. 
+Ô£ª Efeito: -1 SIM_LYRA, +1 FAM_LYRA, -1 MED_LYRA. 
+ 
+Resposta CULPA ÔÇö [D1-02-003B]: 
+[D1-02-003B] LYRA: (Para. Longa pausa.) Ent├úo... voc├¬ admite. 
+[D1-02-003B-2] LYRA: (Mais baixo) Isso n├úo muda nada. 
+
+=== PAGE 15 ===
+Ô£ª Efeito: +1 SIM_LYRA, +2 CUR_LYRA, -1 MED_LYRA. FLAG_NPC_LYRA_CULPA_USED = 
+true. 
+ 
+Resposta SIL├èNCIO ÔÇö [D1-02-003C]: 
+[D1-02-003C] LYRA: OLHE PRA MIM QUANDO EU ESTIVER FALANDO! 
+[D1-02-003C-2] NARRA├ç├âO: Ela jogou uma pedra. Errou por meio metro. Os alde├Áes olham 
+para o ch├úo. Lyra parece menor do que antes. Malfeitor n├úo reagiu. 
+Ô£ª Efeito: +2 CUR_LYRA, +1 FAM_LYRA. 
+ 
+Resposta AUTORIDADE ÔÇö [D1-02-003D]:   CAMINHO RUIM 
+[D1-02-003D] LYRA: (Voz quebra de raiva) Crian├ºa? CRIAN├çA? Eu tinha sete anos quandoÔÇö 
+[D1-02-003D-2] ALDE├âO 1: (Cochicho) Viram? Olha como ele fala com ela. 
+Ô£ª Efeito: -3 LEA_LYRA, +2 MED_LYRA. FLAG_VILLAGE_TRUST_HIT_1 = true. 
+FLAG_PLAYER_AUTHORITY_USED_THIS_WEEK = true. 
+­ƒö┤ CR├ìTICO: FLAG_VILLAGE_TRUST_HIT_1 + mais 2 usos de AUTORIDADE nos 
+Dias 1-7 = FLAG_VILLAGE_HOSTILE. Bloqueia Final Reden├º├úo Plena 
+permanentemente. 
+ 
+CENA D1-03 ÔÇö PRA├çA/TAVERNA: Aldric aborda Malfeitor. 
+OBRIGAT├ôRIA. 
+Trigger: Autom├ítico ÔÇö tarde do Dia 1. Esta cena N├âO pode ser ignorada. Aldric intercepta 
+Malfeitor. ├ë o ├║nico NPC que sabe a identidade real. 
+ 
+[D1-03-001] ALDRIC: Voc├¬ parece melhor do que ontem. "Melhor" sendo relativo. 
+[D1-03-002] ALDRIC: N├úo precisa agradecer. N├úo fiz por bondade. Isso ficar├í claro 
+eventualmente. 
+[D1-03-003] ALDRIC: H├í uma igreja no fim da rua principal. N├úo precisa ser religioso. Mas se 
+precisar de um lugar para sentar em sil├¬ncio, existe. 
+ 
+ÔåÆ ESCOLHA DO JOGADOR: 
+ÔÇó [CURIOSIDADE] "Por que voc├¬ me ajudou?" 
+ÔÇó [SARCASMO] "Um vil├úo numa igreja. Vou refletir sobre isso." 
+ÔÇó [VULNERABILIDADE] "N├úo sei por que ainda estou vivo." 
+ÔÇó [SIL├èNCIO] [Malfeitor olha para a igreja ao fundo] 
+ 
+Resposta CURIOSIDADE ÔÇö [D1-03-004A]: 
+[D1-03-004A] ALDRIC: A resposta curta: porque posso. A resposta longa: porque algumas 
+d├¡vidas se pagam de formas inesperadas. N├úo me pe├ºa mais do que isso hoje. 
+
+=== PAGE 16 ===
+Ô£ª Efeito: +2 FAM_ALDRIC, +1 CUR_ALDRIC. 
+ 
+Resposta SARCASMO ÔÇö [D1-03-004B]: 
+[D1-03-004B] ALDRIC: (Sorri levemente) Onde mais voc├¬ refletiria? Um homem que fez o que 
+voc├¬ fez tem muito no que pensar. 
+Ô£ª Efeito: +1 CUR_ALDRIC, +1 SIM_ALDRIC. 
+ 
+Resposta VULNERABILIDADE ÔÇö [D1-03-004C]: 
+[D1-03-004C] ALDRIC: (Pausa longa) Eu j├í n├úo soube por que estava vivo, uma vez. Foi a pior 
+fase da minha vida. E a mais necess├íria. 
+Ô£ª Efeito: +2 SIM_ALDRIC, +1 LEA_ALDRIC. FLAG_NPC_ALDRIC_PERSONAL_HINT_1 = 
+true. 
+ 
+Resposta SIL├èNCIO ÔÇö [D1-03-004D]: 
+[D1-03-004D] ALDRIC: At├® logo, ent├úo. (Come├ºa a ir, para sem virar) A Berthilda planta no 
+jardim aos Domingos de manh├ú. N├úo que isso importe. 
+Ô£ª Efeito: +1 FAM_ALDRIC. 
+ 
+[D1-03-005] NARRA├ç├âO: Aldric vai embora sem pressa. Voc├¬ percebe que ele n├úo disse seu 
+nome. N├úo o nome que voc├¬ usa. N├úo o outro. 
+Ôûá Fim de cena D1-03. FLAG_NPC_ALDRIC_INTRO_COMPLETE = true. 
+ 
+CENA D2-01 ÔÇö TAVERNA: Rotina de trabalho com Gareth. Repet├¡vel. 
+Trigger: Malfeitor tenta trabalhar na taverna. Repet├¡vel at├® 5x no Ato I. Di├ílogo muda por 
+FAM_GARETH e dia. 
+ 
+VERS├âO A ÔÇö Dias 2-4, FAM < 3: 
+[D2-01-001] GARETH: Vassoura fica a├¡. Mesa do canto t├í com mancha de vinho velho. 
+[D2-01-002] GARETH: N├úo conversa enquanto trabalha. Perturba o ritmo. 
+Resultado: +2-3 moedas. +1 FAM_GARETH se trabalho conclu├¡do sem reclama├º├úo. 
+ 
+VERS├âO B ÔÇö Dias 5+, FAM >= 3: 
+[D2-01-010] GARETH: (Sem olhar) Tem barril novo pra mover l├í atr├ís. Pesado. Se n├úo 
+conseguir, me fala. 
+[D2-01-011] GARETH: Voc├¬ faz isso direto. Sem reclamar. Odeio quando as pessoas 
+reclamam. 
+ 
+VERS├âO B ÔÇö Branch CURIOSIDADE (FAM >= 5): 
+
+=== PAGE 17 ===
+[D2-01-014] GARETH: Doze anos. Antes era do pai de um homem que quebrou. Comprei por 
+metade do valor quando ele precisava sair da cidade depressa. 
+[D2-01-015] GARETH: N├úo foi limpo o que eu fiz. Mas foi legal. ├Çs vezes legal e limpo n├úo 
+combinam. 
+Ô£ª Efeito: +1 CUR_GARETH, +1 FAM_GARETH. FLAG_NPC_GARETH_VULNERABILITY_1 = 
+true. 
+Ôûá Fim de D2-01. 
+ 
+CENA D5-01 ÔÇö JARDIM DE DAVI: Primeiro encontro. 
+Trigger: Semana 1, Dias 4-7. Requer FAM_GARETH >= 2 (Gareth menciona Davi). 
+Desbloqueado se Malfeitor explorar a aldeia. 
+ 
+[D5-01-001] DAVI: (Sem olhar, examinando uma planta) Voc├¬ n├úo ├® daqui. Postura errada para 
+algu├®m que carregou lenha a vida toda. 
+[D5-01-002] DAVI: Davi. Ervas medicinais, venenos n├úo-venenos, e tudo que a biblioteca n├úo 
+deixa ter em exposi├º├úo aberta. 
+ 
+ÔåÆ ESCOLHA DO JOGADOR: 
+ÔÇó [CURIOSIDADE] "Venenos n├úo-venenos?" ÔåÉ Melhor abertura com Davi 
+ÔÇó [SINCERIDADE] "Sim. N├úo sei por quanto tempo." 
+ÔÇó [SARCASMO] "Fama me precede, ao que parece." 
+ 
+Resposta CURIOSIDADE ÔÇö [D5-01-003A]: 
+[D5-01-003A] DAVI: Chamo de n├úo-venenos as plantas que matam dependendo da dose. 
+Beladona, dedaleira, ac├┤nito. Em quantidade certa, curam. Em quantidade errada... 
+[D5-01-003A-2] DAVI: Tudo que ├® poderoso ├® assim. N├úo acha? 
+Ô£ª Efeito: +2 CUR_DAVI, +1 RES_DAVI. FLAG_NPC_DAVI_INTRO_COMPLETE = true. 
+ 
+Resposta SINCERIDADE ÔÇö [D5-01-003B]: 
+[D5-01-003B] DAVI: Honesto. Incomum. (Volta a examinar a planta) Se quiser aprender alguma 
+coisa ├║til enquanto fica, passe aqui amanh├ú cedo. 
+Ô£ª Efeito: +1 SIM_DAVI, +1 FAM_DAVI. FLAG_NPC_DAVI_INTRO_COMPLETE = true. 
+ 
+Resposta SARCASMO ÔÇö [D5-01-003C]: 
+[D5-01-003C] DAVI: A fama de todo mundo precede. Estou interessado no que vem depois. 
+Ô£ª Efeito: +1 CUR_DAVI. FLAG_NPC_DAVI_INTRO_COMPLETE = true. 
+Ôûá Fim de D5-01. 
+ 
+
+=== PAGE 18 ===
+SONHO D1-DREAM-01 ÔÇö O TRIBUNAL 
+Trigger: Autom├ítico ÔÇö noite dos Dias 6-7, Ato I. 
+Mec├ónica: Sonho linear. Sem escolhas reais. Jogador controla Kael jovem (22 anos). S├│ pode 
+andar. C├ómera levemente distorcida. 
+Ôùå Este sonho humaniza Malfeitor antes de qualquer escolha do jogador. ├ë 
+intencionalmente antes da Semana 2. 
+ 
+[DREAM-01-001] NARRA├ç├âO: Voc├¬ ├® Kael. Voc├¬ tem vinte e dois anos. O tribunal tem pedras 
+frias. Seu pai est├í do outro lado do recinto. 
+[DREAM-01-002] REI VALDRIS: (Off-screen, voz apenas) Por crimes de trai├º├úo ├á Coroa... 
+[DREAM-01-003] PAI DE KAEL: (Baixo, para Kael) Corre. Pela janela. Corre e n├úo voltes. 
+[DREAM-01-004] NARRA├ç├âO: Voc├¬ tenta correr. Seus p├®s n├úo movem. O sonho ├® assim ÔÇö 
+n├úo por crueldade, mas porque a mem├│ria guarda o peso, n├úo a velocidade. 
+[DREAM-01-005] ALDRIC: (Jovem, 47 anos, de uniforme da Corte, de costas para Kael) ... 
+[DREAM-01-006] NARRA├ç├âO: Voc├¬ acorda. O quarto ├® o mesmo. A cama ├® dura. Voc├¬ tem 
+cinquenta e dois anos agora. N├úo adiantou nada. 
+Ôûá Fim do Sonho 01. +1 CUR_ALDRIC para o JOGADOR (conhecimento assim├®trico ÔÇö 
+Malfeitor n├úo sabe que sabe). 
+ 
+CENA D3-01 ÔÇö IGREJA: Aldric oferece trabalho de copista. 
+Trigger: Dias 3-5. Malfeitor visita a Igreja. Requer FLAG_NPC_ALDRIC_INTRO_COMPLETE. 
+ 
+[D3-01-001] ALDRIC: Boa tarde. Voc├¬ est├í aqui por raz├úo ou por h├íbito? 
+ 
+ÔåÆ ESCOLHA: 
+ÔÇó [CURIOSIDADE] "O que acontece aqui?" 
+ÔÇó [SINCERIDADE] "Nenhum dos dois. Precisava de um lugar quieto." 
+ÔÇó [SIL├èNCIO] [Senta num banco ao fundo] 
+ 
+[D3-01-002] ALDRIC: Tenho documentos que precisam ser copiados. Letras claras, sem 
+ornamento. Pago oito moedas por sess├úo de meio dia. 
+[D3-01-003] ALDRIC: N├úo pergunto por que voc├¬ sabe escrever. Presumo que voc├¬ n├úo 
+perguntar├í por que eu preciso de algu├®m que n├úo seja da aldeia. 
+Ô£ª Efeito (qualquer escolha): FLAG_NPC_ALDRIC_DEBT_HINT_1 = true. Desbloqueia 
+CRAFT_WRITING renda 6-8/dia. 
+Ôûá Fim de D3-01. 
+ 
+ 
+
+=== PAGE 19 ===
+PARTE III ÔÇö ASSET BIBLE WEB 
+3.1 ÔÇö Rendering: Canvas + CSS 
+­ƒîÉ WEB: No contexto web, sprites s├úo PNG spritesheets renderizados via Canvas 2D 
+API. A escala pixel-art ├® feita por CSS (image-rendering: pixelated) e Canvas 
+(imageSmoothingEnabled = false). 
+ 
+// renderer.js ÔÇö setup obrigat├│rio 
+const canvas = document.getElementById('game-canvas'); 
+const ctx = canvas.getContext('2d'); 
+ctx.imageSmoothingEnabled = false;  // NUNCA suavizar sprites 
+ 
+// Escala: mundo 320x180 ÔåÆ exibido em 960x540 (3x) ou adaptativo 
+function setCanvasScale() { 
+  const scale = Math.min( 
+    window.innerWidth / 320, 
+    window.innerHeight / 180 
+  ); 
+  canvas.style.width  = Math.floor(320 * scale) + 'px'; 
+  canvas.style.height = Math.floor(180 * scale) + 'px'; 
+} 
+window.addEventListener('resize', setCanvasScale); 
+ 
+// Desenhar sprite de um spritesheet 
+function drawSprite(sheet, sx, sy, sw, sh, dx, dy, scale=3) { 
+  ctx.drawImage(sheet, sx, sy, sw, sh, dx, dy, sw * scale, sh * scale); 
+} 
+ 
+Personagem 
+Sprite base 
+Frames 
+idle 
+Frames 
+walk 
+Spritesheet 
+Malfeitor 
+24├ù32px 
+4 
+(respira├º├úo) 
+8 (4 dir) 
+malfeitor.png 
+Lyra 
+18├ù26px 
+4 
+6 (2 dir) 
+lyra.png 
+Gareth 
+22├ù32px 
+4 
+6 (2 dir) 
+gareth.png 
+Aldric 
+20├ù30px 
+4 
+6 (2 dir) 
+aldric.png 
+Davi 
+20├ù30px 
+4 
+6 (2 dir) 
+davi.png 
+NPC an├┤nimo 
+16├ù24px 
+2 
+4 (2 dir) 
+npcs_anon.png 
+ 
+3.2 ÔÇö Paleta de Cores Oficial 
+Ôùå Paleta de 16 cores para sprites + 8 cores para UI. Todo asset deve aderir a esta paleta. 
+Valor hex ├® o contrato ÔÇö n├úo usar cor aproximada. 
+ 
+
+=== PAGE 20 ===
+Hex 
+Nome 
+Uso principal 
+#0D0A1F 
+Black Night 
+Contornos, sombras profundas 
+#1A1438 
+Deep Void 
+Base escura da capa de Malfeitor 
+#2E1B69 
+Malfeitor Purple 
+Capa de Malfeitor ÔÇö detalhes 
+#5B2D8E 
+Magic Glow 
+Efeitos de magia, marcas da capa 
+#8B5CE8 
+Arcane Light 
+Part├¡culas m├ígicas 
+#C8A4F8 
+Pale Magic 
+Highlight magia, veste de Aldric 
+#2C1A0E 
+Dark Wood 
+Taverna, m├│veis, barba de Gareth 
+#5C3317 
+Brown Earth 
+Ch├úo, terra 
+#8B5E3C 
+Warm Skin 
+Pele base (Gareth, Davi) 
+#C4956A 
+Light Skin 
+Pele clara (Lyra, Nora, Aldric) 
+#1A3A2E 
+Dark Green 
+Vegeta├º├úo, ervas 
+#2E6B4F 
+Forest Green 
+Grama, jardim 
+#4A9E6F 
+Herb Green 
+Folhagens, ├¡cones de craft 
+#8B0000 
+Blood Red 
+Perigo, selo de Stenn 
+#C8C8C8 
+Stone Gray 
+Pedras, paredes 
+#F5E6C8 
+Parchment 
+Documentos, fundo de UI 
+ 
+UI Colors (n├úo usadas em sprites): 
+Hex 
+Uso 
+#0A1628 
+Background UI escuro 
+#D4AC0D 
+Gold ÔÇö moedas, achievements 
+#F5A623 
+Amber ÔÇö trust bars positivo 
+#E74C3C 
+Alert Red ÔÇö trust bars negativo 
+#27AE60 
+Success Green ÔÇö trust bars m├íximo 
+#7F8C8D 
+Disabled Gray ÔÇö elementos inativos 
+#ECF0F1 
+Near White ÔÇö texto principal 
+#1F2937 
+Panel Dark ÔÇö fundo de pain├®is 
+ 
+3.3 ÔÇö UI: Layout e Componentes 
+­ƒîÉ WEB: A UI do jogo ├® HTML + CSS sobre o Canvas. O Canvas renderiza o mundo; 
+HTML renderiza caixa de di├ílogo, HUD, pain├®is. Eles coexistem ÔÇö o Canvas fica em 
+z-index 1, a UI em z-index 10+. 
+
+=== PAGE 21 ===
+ 
+<!-- index.html ÔÇö estrutura base --> 
+<div id='game-wrapper'> 
+  <canvas id='game-canvas' width='320' height='180'></canvas> 
+  <div id='hud'> 
+    <div id='top-bar'> 
+      <span id='day-label'>DIA 1 ÔÇö MANH├â</span> 
+      <span id='gold-label'>­ƒÆ░ 5</span> 
+      <div id='week-progress'></div> 
+    </div> 
+    <div id='notification-area'></div> 
+  </div> 
+  <div id='dialogue-box' class='hidden'> 
+    <div id='portrait-container'> 
+      <canvas id='portrait-canvas' width='40' height='40'></canvas> 
+    </div> 
+    <div id='dialogue-content'> 
+      <p id='npc-name'></p> 
+      <p id='dialogue-text'></p> 
+    </div> 
+    <div id='options-container'></div> 
+  </div> 
+  <div id='trust-panel' class='hidden'></div> 
+</div> 
+ 
+Caixa de di├ílogo ÔÇö regras visuais: 
+ÔÇó Fundo escuro semi-transparente (rgba(15, 23, 42, 0.95)) com borda colorida por NPC. 
+ÔÇó Retrato NPC ├á esquerda: 40├ù40px canvas, escala 3x do sprite 40├ù40 de retrato. 
+ÔÇó Nome em fonte pixel-art (Press Start 2P), 8px. 
+ÔÇó Texto em fonte pixel-art, 6px, com efeito typewriter (1 caractere a cada 30ms). 
+ÔÇó Op├º├Áes aparecem ap├│s typewriter completo, com delay escalonado (0ms, 80ms, 160ms, 
+240ms). 
+ÔÇó Cada op├º├úo mostra a tag do aspecto com cor espec├¡fica + texto da fala. 
+ 
+Aspecto 
+Cor da tag (bg) 
+Cor do texto 
+Borda 
+SINCERIDADE 
+#1E3A5F 
+#93C5FD 
+#3B82F6 
+SARCASMO 
+#18181B 
+#A1A1AA 
+#71717A 
+VULNERABILIDADE 
+#2E1065 
+#C4B5FD 
+#8B5CF6 
+MANIPULA├ç├âO 
+#450A0A 
+#FCA5A5 
+#EF4444 
+CULPA 
+#111827 
+#9CA3AF 
+#4B5563 
+CURIOSIDADE 
+#022C22 
+#6EE7B7 
+#10B981 
+AUTORIDADE 
+#431407 
+#FDBA74 
+#F97316 
+SIL├èNCIO 
+#0F172A 
+#475569 
+#334155 
+
+=== PAGE 22 ===
+ 
+3.4 ÔÇö ├üudio 
+­ƒîÉ WEB: Usando Howler.js. Todo ├íudio ├® carregado lazy (ao entrar na cena que o 
+usa). Formatos: OGG principal, MP3 fallback. 
+ 
+Arquivo 
+Contexto 
+BPM 
+Notas 
+mus_village_day.ogg 
+Aldeia ÔÇö dia 
+comum 
+72 
+Flauta chip + baixo suave. 
+Loop seamless. 
+mus_village_night.ogg 
+Aldeia ÔÇö noite 
+58 
+Piano chip + pad. 
+Melanc├│lico. 
+mus_dialogue_tension.ogg 
+Di├ílogo de alta 
+tens├úo 
+vari├ível 
+Apenas percuss├úo. Sem 
+melodia. 
+mus_dream.ogg 
+Sonhos 
+flutuante 
+Arpejo descendente + reverb 
+longo. 
+sfx_text_blip.wav 
+Typewriter 
+gen├®rico 
+ÔÇö 
+Som chip de 50ms, pitch 
+440Hz 
+sfx_text_blip_gareth.wav 
+Typewriter 
+Gareth 
+ÔÇö 
+Pitch mais grave (330Hz) 
+sfx_text_blip_lyra.wav 
+Typewriter Lyra 
+ÔÇö 
+Pitch agudo (660Hz), 
+agressivo 
+sfx_text_blip_aldric.wav 
+Typewriter Aldric 
+ÔÇö 
+Pitch m├®dio (370Hz), suave 
+sfx_ui_hover.wav 
+Hover de op├º├úo 
+ÔÇö 
+Click suave 20ms 
+sfx_ui_select.wav 
+Sele├º├úo de 
+aspecto 
+ÔÇö 
+Ping 100ms 
+sfx_coin.wav 
+Receber moedas 
+ÔÇö 
+Ching met├ílico 
+sfx_notification.wav 
+Notifica├º├úo de 
+evento 
+ÔÇö 
+Sino suave 2 notas 
+ 
+ 
+Ôÿá  FIM DO MASTERBIBLE v4.0  Ôÿá 
+MALFEITOR  |  Stack: HTML + CSS + JavaScript  |  Demo: Ato I, Dias 1-7 
+
