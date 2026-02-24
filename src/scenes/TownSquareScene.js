@@ -19,11 +19,14 @@ import { Atmosphere } from '../engine/atmosphere.js';
 
 // Colliders estáticos (1280×720)
 const COLLIDERS = [
-  // Bordas
-  { x: 0,    y: 0,   w: 1280, h: 32 },     // norte
+  // Bordas (com aberturas para saídas)
+  { x: 0,    y: 0,   w: 520,  h: 32 },      // norte esquerda
+  { x: 760,  y: 0,   w: 520,  h: 32 },      // norte direita
   { x: 0,    y: 0,   w: 32,   h: 720 },     // oeste
-  { x: 1248, y: 0,   w: 32,   h: 720 },     // leste
-  { x: 0,    y: 688, w: 1280, h: 32 },      // sul
+  { x: 1248, y: 0,   w: 32,   h: 280 },     // leste superior
+  { x: 1248, y: 440, w: 32,   h: 280 },     // leste inferior
+  { x: 0,    y: 688, w: 520,  h: 32 },      // sul esquerda
+  { x: 760,  y: 688, w: 520,  h: 32 },      // sul direita
   // Fonte/poço central
   { x: 560,  y: 280, w: 160,  h: 120 },
   // Bancos
@@ -33,9 +36,9 @@ const COLLIDERS = [
 
 // Zonas de saída
 const EXITS = [
-  { x: 520, y: 0,    w: 240, h: 32,  target: 'tavern',      label: 'TAVERNA' },
+  { x: 520, y: 0,    w: 240, h: 96,  target: 'tavern',      label: 'TAVERNA' },
   { x: 1248, y: 280, w: 32,  h: 160, target: 'church',      label: 'IGREJA' },
-  { x: 520, y: 688,  w: 240, h: 32,  target: 'herb_garden', label: 'JARDIM' },
+  { x: 520, y: 656,  w: 240, h: 64,  target: 'herb_garden', label: 'JARDIM' },
 ];
 
 let _lyra = null;
@@ -52,9 +55,9 @@ export const TownSquareScene = {
     } else if (player.x >= 1200) {
       player.x = 1160;
       player.y = 360;
-    } else if (player.y >= 640) {
+    } else if (player.y >= 560) {
       player.x = 640;
-      player.y = 620;
+      player.y = 560;
     }
 
     _lyra = new Lyra(640, 400);
@@ -115,6 +118,8 @@ export const TownSquareScene = {
           const triggerId = findProximityTrigger(npc.id, 'town_square', TimeSystem.day);
           if (triggerId) {
             startDialogue(triggerId).then(() => save());
+          } else {
+            _showIdleDialogue(npc.id);
           }
           break;
         }
@@ -124,7 +129,7 @@ export const TownSquareScene = {
     const ph = player.getHitbox();
     for (const exit of EXITS) {
       if (_overlaps(ph, exit)) {
-        if (exit.target === 'tavern') { player.y = 620; player.x = 640; }
+        if (exit.target === 'tavern') { player.y = 580; player.x = 640; }
         else if (exit.target === 'church') { player.x = 80; player.y = 360; }
         else if (exit.target === 'herb_garden') { player.y = 80; player.x = 640; }
         SceneManager.changeScene(exit.target);
@@ -911,4 +916,29 @@ function _updateVisibility() {
 function _overlaps(a, b) {
   return a.x < b.x + b.w && a.x + a.w > b.x &&
          a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+const _IDLE_LINES = {
+  lyra: ['(Te olha com desprezo e vira o rosto.)', '...Não fala comigo.', '(Cruza os braços.)'],
+  aldeao1: ['...', '(Desvia o olhar.)'],
+  aldeao2: ['...', '(Murmura algo inaudível.)'],
+  aldeao3: ['...', '(Finge não te ver.)'],
+};
+let _lastIdleTime = 0;
+function _showIdleDialogue(npcId) {
+  const now = Date.now();
+  if (now - _lastIdleTime < 3000) return;
+  _lastIdleTime = now;
+  const lines = _IDLE_LINES[npcId] ?? ['...'];
+  const text = lines[Math.floor(Math.random() * lines.length)];
+  const box = document.getElementById('dialogue-box');
+  const nameEl = document.getElementById('npc-name');
+  const textEl = document.getElementById('dialogue-text');
+  document.getElementById('options-container').innerHTML = '';
+  nameEl.textContent = npcId.toUpperCase();
+  nameEl.style.color = '#9CA3AF';
+  textEl.textContent = text;
+  box.style.borderColor = '#374151';
+  box.classList.remove('hidden');
+  setTimeout(() => { box.classList.add('hidden'); }, 2200);
 }

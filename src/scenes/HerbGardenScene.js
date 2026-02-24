@@ -35,7 +35,7 @@ const COLLIDERS = [
 ];
 
 // Zona de saída
-const EXIT = { x: 520, y: 0, w: 240, h: 32, target: 'town_square' };
+const EXIT = { x: 520, y: 0, w: 240, h: 96, target: 'town_square' };
 
 let _davi = null;
 let _npcs = [];
@@ -94,6 +94,8 @@ export const HerbGardenScene = {
           const triggerId = findProximityTrigger(npc.id, 'herb_garden', TimeSystem.day);
           if (triggerId) {
             startDialogue(triggerId).then(() => save());
+          } else {
+            _showIdleDialogue(npc.id);
           }
           break;
         }
@@ -102,7 +104,7 @@ export const HerbGardenScene = {
 
     const ph = player.getHitbox();
     if (_overlaps(ph, EXIT)) {
-      player.y = 620;
+      player.y = 560;
       player.x = 640;
       SceneManager.changeScene(EXIT.target);
     }
@@ -425,4 +427,26 @@ function _updateVisibility() {
 function _overlaps(a, b) {
   return a.x < b.x + b.w && a.x + a.w > b.x &&
          a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+const _IDLE_LINES = {
+  davi: ['(Examina uma planta com atenção.)', 'Hmm... Não agora.', '(Cheira uma erva e franze o nariz.)'],
+};
+let _lastIdleTime = 0;
+function _showIdleDialogue(npcId) {
+  const now = Date.now();
+  if (now - _lastIdleTime < 3000) return;
+  _lastIdleTime = now;
+  const lines = _IDLE_LINES[npcId] ?? ['...'];
+  const text = lines[Math.floor(Math.random() * lines.length)];
+  const box = document.getElementById('dialogue-box');
+  const nameEl = document.getElementById('npc-name');
+  const textEl = document.getElementById('dialogue-text');
+  document.getElementById('options-container').innerHTML = '';
+  nameEl.textContent = npcId.toUpperCase();
+  nameEl.style.color = '#9CA3AF';
+  textEl.textContent = text;
+  box.style.borderColor = '#374151';
+  box.classList.remove('hidden');
+  setTimeout(() => { box.classList.add('hidden'); }, 2200);
 }

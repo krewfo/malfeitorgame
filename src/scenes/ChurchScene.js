@@ -99,6 +99,8 @@ export const ChurchScene = {
           const triggerId = findProximityTrigger(npc.id, 'church', TimeSystem.day);
           if (triggerId) {
             startDialogue(triggerId).then(() => save());
+          } else {
+            _showIdleDialogue(npc.id);
           }
           break;
         }
@@ -685,4 +687,26 @@ function _updateVisibility() {
 function _overlaps(a, b) {
   return a.x < b.x + b.w && a.x + a.w > b.x &&
          a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+const _IDLE_LINES = {
+  aldric: ['(Continua lendo em silêncio.)', 'Agora não, por favor.', '(Faz um gesto pedindo silêncio.)'],
+};
+let _lastIdleTime = 0;
+function _showIdleDialogue(npcId) {
+  const now = Date.now();
+  if (now - _lastIdleTime < 3000) return;
+  _lastIdleTime = now;
+  const lines = _IDLE_LINES[npcId] ?? ['...'];
+  const text = lines[Math.floor(Math.random() * lines.length)];
+  const box = document.getElementById('dialogue-box');
+  const nameEl = document.getElementById('npc-name');
+  const textEl = document.getElementById('dialogue-text');
+  document.getElementById('options-container').innerHTML = '';
+  nameEl.textContent = npcId.toUpperCase();
+  nameEl.style.color = '#9CA3AF';
+  textEl.textContent = text;
+  box.style.borderColor = '#374151';
+  box.classList.remove('hidden');
+  setTimeout(() => { box.classList.add('hidden'); }, 2200);
 }

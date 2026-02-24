@@ -45,7 +45,7 @@ export const TavernScene = {
     _elapsed = 0;
     if (player.x < 40 || player.x > 1200) {
       player.x = 640;
-      player.y = 620;
+      player.y = 580;
     }
 
     _gareth = new Gareth(800, 480);
@@ -89,9 +89,11 @@ export const TavernScene = {
     if (interactPressed()) {
       for (const npc of _npcs) {
         if (npc.visible && npc.isPlayerNear(player) && npc.canInteract() === true) {
-          const triggerId = findProximityTrigger(npc.id, 'tavern_main', TimeSystem.day);
+          const triggerId = findProximityTrigger(npc.id, 'tavern', TimeSystem.day);
           if (triggerId) {
             startDialogue(triggerId).then(() => save());
+          } else {
+            _showIdleDialogue(npc.id);
           }
           break;
         }
@@ -100,6 +102,8 @@ export const TavernScene = {
 
     const ph = player.getHitbox();
     if (_overlaps(ph, EXIT_ZONE)) {
+      player.x = 640;
+      player.y = 80;
       SceneManager.changeScene(EXIT_ZONE.target);
     }
 
@@ -463,4 +467,26 @@ function _updateNPCVisibility() {
 function _overlaps(a, b) {
   return a.x < b.x + b.w && a.x + a.w > b.x &&
          a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+const _IDLE_LINES = {
+  gareth: ['Tá olhando o quê? Tem trabalho a fazer.', 'Não tenho tempo pra conversa.', 'Se não vai trabalhar, saia da frente.'],
+};
+let _lastIdleTime = 0;
+function _showIdleDialogue(npcId) {
+  const now = Date.now();
+  if (now - _lastIdleTime < 3000) return;
+  _lastIdleTime = now;
+  const lines = _IDLE_LINES[npcId] ?? ['...'];
+  const text = lines[Math.floor(Math.random() * lines.length)];
+  const box = document.getElementById('dialogue-box');
+  const nameEl = document.getElementById('npc-name');
+  const textEl = document.getElementById('dialogue-text');
+  document.getElementById('options-container').innerHTML = '';
+  nameEl.textContent = npcId.toUpperCase();
+  nameEl.style.color = '#9CA3AF';
+  textEl.textContent = text;
+  box.style.borderColor = '#374151';
+  box.classList.remove('hidden');
+  setTimeout(() => { box.classList.add('hidden'); }, 2200);
 }

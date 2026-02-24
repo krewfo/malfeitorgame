@@ -43,7 +43,7 @@ export function findProximityTrigger(npcId, scene, day) {
     if (nodeScene && nodeScene !== scene) continue;
     if (t.day_range && (day < t.day_range[0] || day > t.day_range[1])) continue;
     if (t.conditions?.some(f => !getFlag(f))) continue;
-    if (getFlag(`FLAG_DIALOGUE_${id}_SEEN`)) continue;
+    if (getFlag(`FLAG_DIALOGUE_${id}_SEEN`) && !t.repeatable) continue;
     if (!best || t.priority > best.priority) best = { id, priority: t.priority ?? 0 };
   }
   return best?.id ?? null;
